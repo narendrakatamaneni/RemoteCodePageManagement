@@ -1,0 +1,358 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Publisher.cpp</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="Publisher.h.html">Publisher.h</a><br/>
+      <a href="Logger.h.html">Logger.h</a><br/>
+      <a href="IPublisher.h.html">IPublisher.h</a><br/>
+    </h3>    <pre>
+<div class="comments">///////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// CodePublisher.cpp : defines facade/executive for OOD Pr1 S19          //</div>
+<div class="comments">// ver 1.0                                                               //</div>
+<div class="comments">// Author        :Narendra Katamaneni, Syracuse University               //</div>
+<div class="comments">///////////////////////////////////////////////////////////////////////////</div>
+
+<div class="comments">/*
+* Package Operations:
+* -------------------
+* This package supports logging for multiple concurrent clients to a
+* single std::ostream.  It does this be enqueuing messages in a
+* blocking queue and dequeuing with a single thread that writes to
+* the std::ostream.
+*
+* Build Process:
+* --------------
+* Required Files: Logger.h,Executive.h
+*
+* Build Command: devenv logger.sln /rebuild debug
+*
+* Maintenance History:
+* --------------------
+* ver 1.0 : 11 Feb 2019
+* - added multiple stream capability
+*
+* Planned Additions and Changes:
+* ------------------------------
+* - none yet
+*/</div>
+
+#include "Publisher.h"
+#include "../Logger/Logger.h"
+#include &lt;conio.h&gt;
+#include &lt;exception&gt;
+#include "IPublisher.h"
+
+using namespace Utilities;
+using namespace Logging; 
+using namespace FileSystem;
+
+ProcessCmdLine::Usage customUsage();
+
+std::vector&lt;std::string&gt; Publisher::convertedfiles_;
+
+Publisher::Publisher()
+<div class="funClass">{
+}</div>
+
+<div class="comments">// -----&lt; process cmd to get info &gt;------------------------------------</div>
+bool Publisher::processCommandLineArgs(int argc, char ** argv)
+<div class="funClass">{
+  pcl_ = new ProcessCmdLine(argc, argv); 
+  pcl_-&gt;usage(customUsage());
+
+  preface("Command Line: ");
+  pcl_-&gt;showCmdLine();
+
+  if (pcl_-&gt;parseError())
+  {
+    pcl_-&gt;usage();
+    std::cout &lt;&lt; "\n\n";
+    return false;
+  }
+  dirIn_ = pcl_-&gt;path();
+  return true;
+}</div>
+
+<div class="comments">// -----&lt; return input directory - from PCL &gt;----------------------------</div>
+const std::string & Publisher::workingDirectory() const
+<div class="funClass">{
+  return dirIn_;
+}</div>
+
+<div class="comments">// -----&lt; set output directory &gt;-----------------------------------------</div>
+void Publisher::outputDirectory(const std::string & dir)
+<div class="funClass">{
+  dirOut_ = dir; 
+  cconv_.outputDir(dir);
+}</div>
+
+<div class="comments">// -----&lt; return output directory &gt;--------------------------------------</div>
+const std::string & Publisher::outputDirectory() const
+<div class="funClass">{
+  return dirOut_;
+}</div>
+
+<div class="comments">// -----&lt; extract files - after processing cmd &gt;-------------------------</div>
+bool Publisher::extractFiles()
+<div class="funClass">{
+	Loader de(pcl_-&gt;path());
+
+  for (auto patt : pcl_-&gt;patterns())
+  {
+    de.addPattern(patt);
+  }
+
+  if (pcl_-&gt;hasOption("s"))
+  {
+    de.recurse();
+  }
+
+  bool res = de.search() && de.match_regexes(pcl_-&gt;regexes());
+  de.showStats();
+
+  files_ = de.filesList();
+
+  return res;
+}</div>
+
+
+<div class="comments">// -----&lt; publish - files extracted from directory explorer &gt;---------------</div>
+void Publisher::publish()
+<div class="funClass">{
+  display_.display(cconv_.convert(files_));
+}</div>
+
+<div class="comments">// -----&lt; publish - single file &gt;-------------------------------------------</div>
+void Publisher::publish(const std::string & file)
+<div class="funClass">{
+  display_.display(cconv_.convert(file));
+}</div>
+
+<div class="comments">// -----&lt; publish - must provide list &gt;-------------------------------------</div>
+void Publisher::publish(const std::vector&lt;std::string&gt;& files)
+<div class="funClass">{
+  display_.display(cconv_.convert(files));
+}</div>
+
+<div class="comments">// -----&lt; gets display mode as set by PCL &gt;---------------------------------</div>
+Utilities::DisplayMode Publisher::displayMode() const
+<div class="funClass">{
+  return pcl_-&gt;displayMode();
+}</div>
+
+
+<div class="comments">// -----&lt; command line usage &gt;----------------------------------------------</div>
+ProcessCmdLine::Usage customUsage()
+<div class="funClass">{
+  std::string usage;
+  usage += "\n  Command Line: path [/option]* [/pattern]* [/regex]*";
+  usage += "\n    path is relative or absolute path where processing begins";
+  usage += "\n    [/option]* are one or more options of the form:";
+  usage += "\n      /s     - walk directory recursively";
+  usage += "\n      /demo  - run in demonstration mode (cannot coexist with /debug)";
+  usage += "\n      /debug - run in debug mode (cannot coexist with /demo)";
+  <div class="comments">//usage += "\n      /h - hide empty directories";</div>
+  <div class="comments">//usage += "\n      /a - on stopping, show all files in current directory";</div>
+  usage += "\n    [pattern]* are one or more pattern strings of the form:";
+  usage += "\n      *.h *.cpp *.cs *.txt or *.*";
+  usage += "\n    [regex] regular expression(s), i.e. [A-B](.*)";
+  usage += "\n";
+  return usage;
+}</div>
+
+<div class="comments">// -----&lt; initialize loggers in proper display mode &gt;------------------------</div>
+void initializeLoggers(DisplayMode dm) <div class="funClass">{
+  if (dm == DisplayMode::Debug) {
+    LoggerDebug::attach(&std::cout);
+    LoggerDebug::start();
+  }
+
+  else if (dm == DisplayMode::Demo) {
+    LoggerDemo::attach(&std::cout);
+    LoggerDemo::start();
+  }
+}</div>
+
+<div class="comments">// -----&lt; stop loggers &gt;-----------------------------------------------------</div>
+void stopLoggers() <div class="funClass">{
+  LoggerDemo::stop();
+  LoggerDebug::stop();
+}</div>
+
+IPublisher* ObjectFactory::createClient() <div class="funClass">{
+	return new Publisher;
+}</div>
+
+<div class="comments">//#ifdef DEMO_CP</div>
+
+#include &lt;iostream&gt;
+
+<div class="comments">// -----&lt; demonstrate requirement 3 and 4 &gt;----------------------------------------------</div>
+void demoReq34() <div class="funClass">{
+  LoggerDemo::write("\n");
+  LoggerDemo::title("Demonstrating Requirement #3 & #4 - Packages");
+  LoggerDemo::write("\n Contains Executive package that accepts, from its command line, a path containing files to be converted and also contains Loader, Converter, Dependencies, and Display packages");
+}</div>
+
+
+<div class="comments">// -----&lt; demonstrate requirements 5 &gt;---------------------------------------</div>
+int demoReq5(Publisher& cp, int argc, char ** argv) <div class="funClass">{
+  LoggerDemo::write("\n");
+  LoggerDemo::title("Demonstrating Requirements #5 - command line arguments");
+  LoggerDemo::write(customUsage());
+
+  if (argc &lt; 2) return 1; <div class="comments">// even before processing, if no path, just reject it</div>
+
+  LoggerDemo::write("\n  Changing cmd path to ../debug to test Requirement 5\n");
+
+  <div class="comments">// cmd has the path always as first arg... we so change it to find no files</div>
+  char * tmp = new char[sizeof(argv[1])];
+  strcpy_s(tmp, sizeof(tmp), argv[1]);
+  argv[1] = new char[9];
+  strcpy_s(argv[1], 9, "../debug"); // no files will be found matching this
+  
+  if (!cp.processCommandLineArgs(argc, argv)) return 1; <div class="comments">// just in case</div>
+
+  if (!cp.extractFiles()) {
+	  LoggerDemo::write("\n\n  No files found in the current directory. We will ");
+    LoggerDemo::write("\n  continue since we deliberately changed argv[1] to ");
+    LoggerDemo::write("\n  test Requirement 5. After restoring argv[1], if there ");
+    LoggerDemo::write("\n  are no files to process, the program will terminate. \n");
+  }
+
+  LoggerDemo::write("\n\n  Changing back cmd path to original to continue demonstartion.\n");
+  delete argv[1];
+  argv[1] = tmp;
+
+  if (!cp.processCommandLineArgs(argc, argv)) return 1; <div class="comments">// just in case</div>
+  if (!cp.extractFiles()) { <div class="comments">// if this fails, then there are no files to process at all</div>
+    return 2; <div class="comments">// the demo will end after this</div>
+  }
+
+  return 0;
+}</div>
+
+<div class="comments">// -----&lt; demonstrate requirements 6,7 and 8 &gt;------------------------------</div>
+void demoReq678(Publisher& cp) <div class="funClass">{
+  LoggerDemo::write("\n");
+  LoggerDemo::title("Demonstrating Requirements #6, #7 & #8 - Convert , Dependencies and Display");
+  cp.CollectConvertedFiles();
+
+}</div>
+
+
+<div class="comments">// -----&lt; demonstrate requirement 9 &gt;-------------------------------------</div>
+void demoReq9() <div class="funClass">{
+  LoggerDemo::write("\n");
+  LoggerDemo::title("Demonstrating Requirement #9 - Automated Test Unit");
+  LoggerDemo::write("\n  Well, this is the automated test unit.");
+  LoggerDemo::write("\n\n  All Requirements met. ");
+
+}</div>
+
+int Publisher::SetCmd(int argc,char** argv) <div class="funClass">{
+	try {
+		std::cout &lt;&lt; "Inside publisher project.." &lt;&lt; std::endl;
+
+		initializeLoggers(Utilities::DisplayMode::Debug); <div class="comments">// by default go debug</div>
+		for (int i = 0; i &lt; argc; i++) {
+			std::string arg = argv[i];
+			<div class="comments">//if (arg == "/demo") { // only go demo once told </div>
+				stopLoggers();
+				initializeLoggers(Utilities::DisplayMode::Demo);
+				break;
+			<div class="comments">//}</div>
+		}
+
+		demoReq34();
+
+		Publisher cp;
+
+		int err = demoReq5(cp, argc, argv);
+		if (err == 1) {
+			LoggerDemo::write("\n  Invalid command line args.\n  Ending demonstration...\n");
+			return 1;
+		}
+		else if (err == 2) {
+			LoggerDemo::write("\n  The given path has no files matching patterns and/or regexes.");
+			LoggerDemo::write("\n  Ending demonstration...\n");
+			return 2;
+		}
+		demoReq678(cp);
+		<div class="comments">//demoReq9();</div>
+		stopLoggers();
+	}
+	catch (std::exception& e) {
+		std::cout &lt;&lt; "Oops an Exception occured :  " &lt;&lt; e.what() &lt;&lt; '\n';
+	}
+	return 1;
+}</div>
+
+	
+void Publisher::Convert() <div class="funClass">{
+
+}</div>
+
+std::vector&lt;std::string&gt; Publisher::GetConvertFiles() <div class="funClass">{
+	std::cout &lt;&lt; "GetConvertFiles()...." &lt;&lt; convertedfiles_.size() &lt;&lt; std::endl;
+	return convertedfiles_;
+}</div>
+
+void Publisher::CollectConvertedFiles() <div class="funClass">{
+
+	convertedfiles_ = cconv_.convert(files_);
+
+	for (int i = 0;i &lt; convertedfiles_.size();i++) {
+		std::cout &lt;&lt; "List of converted files are ..." &lt;&lt; convertedfiles_[i] &lt;&lt; std::endl;
+	}
+
+}</div>
+
+<div class="comments">//#endif</div>
+
+#ifdef USE_CP
+
+#include &lt;iostream&gt;
+
+<div class="comments">// -----&lt; NORMAL USE MAIN &gt; ------------------------------------------</div>
+int main(int argc, char ** argv) <div class="funClass">{
+	Executive cp;
+  if (!cp.processCommandLineArgs(argc, argv)) {
+    std::cout &lt;&lt; "\n  Failed to process command line arguments. Terminating\n\n";
+    return 1;
+  }
+
+  initializeLoggers(cp.displayMode());
+
+  if (!cp.extractFiles()) {
+    stopLoggers();
+    std::cout &lt;&lt; "\n  Found no files to process. Terminating.\n\n";
+    return 0; 
+  }
+
+  cp.publish();
+  stopLoggers();
+  return 0;
+}</div>
+
+#endif
+    </pre>
+  </body>
+</html>

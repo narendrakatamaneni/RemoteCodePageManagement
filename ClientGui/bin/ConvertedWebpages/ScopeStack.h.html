@@ -1,0 +1,211 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>ScopeStack.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <pre>
+#ifndef SCOPESTACK_H
+#define SCOPESTACK_H
+<div class="comments">/////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// ScopeStack.h - implements template stack holding specified element type //</div>
+<div class="comments">// ver 1.0                                                                 //</div>
+<div class="comments">// Author:        Narendra Katamaneni, Syracuse University				   //</div>
+<div class="comments">/////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">/*
+  Package Operations:
+  ===================
+  This package contains one class: ScopeStack&lt;element&gt;.  The element type
+  is an application specific type designed to hold whatever information you
+  need to stack.
+
+  Throws std::exception if stack is popped or peeked when empty.
+
+  Public Interface:
+  =================
+  ScopeStack&lt;element&gt; stack;
+  <div class="comments">// define some element type</div>
+  element elem;
+  stack.push(elem);
+  element popped = stack.pop();
+
+  Required Files:
+  ===============
+
+
+  Build Command:
+  ==============
+  devenv ScopeStack.sln /rebuild debug
+
+  Maintenance History:
+  ====================
+  ver 1.0 : 28 Feb 2019
+  - first release
+*/</div>
+#include &lt;list&gt;
+#include "../Logger/Logger.h"
+#include "../Utilities/Utilities.h"
+
+<div class="comments">// element is a application specific type.  It must provide a function:</div>
+<div class="comments">// std::string show() that returns a string display of its parts. see</div>
+<div class="comments">// test stub for an example.</div>
+
+namespace CodeAnalysis
+{
+  template&lt;typename element&gt;
+  class ScopeStack <div class="clsClass">{
+  public:
+    using Rslt = Logging::StaticLogger&lt;0&gt;;    <div class="comments">// show program results</div>
+    using Demo = Logging::StaticLogger&lt;1&gt;;    <div class="comments">// show demonstration outputs</div>
+    using Dbug = Logging::StaticLogger&lt;2&gt;;    <div class="comments">// show debugging outputs</div>
+    typename typedef std::list&lt;element&gt;::iterator iterator;
+
+    ScopeStack();
+    void push(const element& item);
+    element pop();
+    element& top();
+    element& predOfTop();
+    size_t size();
+    iterator begin();
+    iterator end();
+  private:
+    std::list&lt;element&gt; stack;
+    element dbElement;
+  };
+</div>
+  template&lt;typename element&gt;
+  ScopeStack&lt;element&gt;::ScopeStack() <div class="funClass">{
+  }</div>
+
+  template&lt;typename element&gt;
+  typename inline size_t ScopeStack&lt;element&gt;::size() { return stack.size(); }</div>
+
+  template&lt;typename element&gt;
+  typename inline ScopeStack&lt;element&gt;::iterator ScopeStack&lt;element&gt;::begin() { return stack.begin(); }</div>
+
+  template&lt;typename element&gt;
+  typename inline ScopeStack&lt;element&gt;::iterator ScopeStack&lt;element&gt;::end() { return stack.end(); }</div>
+
+  template&lt;typename element&gt;
+  void ScopeStack&lt;element&gt;::push(const element& item)
+  <div class="funClass">{
+    Demo::flush();
+    stack.push_back(item);
+    <div class="comments">//Dbug::write("\n--- stack size = " + CoreUtilities::Converter&lt;size_t&gt;::toString(size()) + " ---");</div>
+    Dbug::flush();
+  }</div>
+
+  template&lt;typename element&gt;
+  element ScopeStack&lt;element&gt;::pop()
+  <div class="funClass">{
+    if (stack.size() == 0)
+    {
+      throw std::exception("-- attempting to pop empty stack --");
+    }
+    element item = stack.back();
+    stack.pop_back();    
+    <div class="comments">//Dbug::write("\n--- stack size = " + CoreUtilities::Converter&lt;size_t&gt;::toString(size()) + " ---");</div>
+    Dbug::flush();
+
+    return item;
+  }</div>
+
+  template&lt;typename element&gt;
+  element& ScopeStack&lt;element&gt;::top()
+  <div class="funClass">{
+    if (stack.size() == 0)
+    {
+      throw std::exception("-- attempting to peek top on empty stack --");
+    }
+    return stack.back();
+  }</div>
+
+  template&lt;typename element&gt;
+  element& ScopeStack&lt;element&gt;::predOfTop()
+  <div class="funClass">{
+    if (size() &lt; 2)
+    {
+      throw std::exception("-- predOfTop() called on stack with less than two elements --");
+    }
+    iterator iter = --(--end());
+    return *iter;
+  }</div>
+
+  template&lt;typename element&gt;
+  void showStack(ScopeStack&lt;element&gt;& stack, bool indent = true)
+  <div class="funClass">{
+    if (stack.size() == 0)
+    {
+      <div class="comments">//std::cout &lt;&lt; "\n  ScopeStack is empty";</div>
+      return;
+    }
+  typename ScopeStack&lt;element&gt;::iterator iter = stack.begin();
+    while (iter != stack.end())
+    {
+      std::string strIndent = std::string(2 * stack.size(), ' ');
+      if (!indent)
+        strIndent = "";
+      element temp = *iter;
+      <div class="comments">//std::cout &lt;&lt; "\n  " &lt;&lt; strIndent &lt;&lt; temp-&gt;show();</div>
+      ++iter;
+    }
+  }</div>
+
+  template&lt;typename element&gt;
+  void showStack(ScopeStack&lt;element*&gt;& stack, bool indent = true)
+  <div class="funClass">{
+    if (stack.size() == 0)
+    {
+      <div class="comments">//std::cout &lt;&lt; "\n  ScopeStack is empty";</div>
+      return;
+    }
+    typename ScopeStack&lt;element*&gt;::iterator iter = stack.begin();
+    while (iter != stack.end())
+    {
+      std::string strIndent = std::string(2 * stack.size(), ' ');
+      if (!indent)
+        strIndent = "";
+      <div class="comments">//std::cout &lt;&lt; "\n  " &lt;&lt; strIndent &lt;&lt; ((*iter)-&gt;show());</div>
+      ++iter;
+    }
+  }</div>
+  <div class="comments">//----&lt; walk tree of element nodes &gt;---------------------------------</div>
+
+  template&lt;typename element&gt;
+  void TreeWalk(element* pItem, bool details = false)
+  <div class="funClass">{
+    static std::string path;
+    static size_t indentLevel = 0;
+    std::ostringstream out;
+    <div class="comments">//out &lt;&lt; "\n  " &lt;&lt; std::string(2 * indentLevel, ' ') &lt;&lt; pItem-&gt;show();</div>
+	<div class="comments">//std::cout &lt;&lt; out.str();</div>
+    auto iter = pItem-&gt;children_.begin();
+    ++indentLevel;
+    while (iter != pItem-&gt;children_.end())
+    {
+      TreeWalk(*iter);
+	  <div class="comments">//out &lt;&lt; "\n  " &lt;&lt; std::string(2 * indentLevel, ' ') &lt;&lt; pItem-&gt;show();</div>
+      ++iter;
+    }
+
+    --indentLevel;
+  }</div>
+}
+#endif
+    </pre>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>AbstrSynTree.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="ITokenCollection.h.html">ITokenCollection.h</a><br/>
+      <a href="ScopeStack.h.html">ScopeStack.h</a><br/>
+    </h3>    <pre>
+#pragma once
+<div class="comments">/////////////////////////////////////////////////////////////////////</div>
+<div class="comments">//  AbstrSynTree.h - Represents an Abstract Syntax Tree            //</div>
+<div class="comments">//  ver 1.0                                                        //</div>
+<div class="comments">//  Author:        Narendra Katamaneni, Syracuse University        //</div>
+<div class="comments">/////////////////////////////////////////////////////////////////////</div>
+<div class="comments">/*
+  Package Operations:
+  ==================
+  This package defines an AbstrSynTree class and an ASTNode struct.  
+  Those provides support for building Abstract Syntax Trees during 
+  static source code analysis.
+
+  Public Interface:
+  =================
+  AbstrSynTree ast(scopeStack);       <div class="comments">// create instance, passing in ScopeStack</div>
+  ASTNode* pNode = ast.root();        <div class="comments">// get or set root of AST</div>
+  ast.add(pNode);                     <div class="comments">// add ASTNode to tree, linked to current scope</div>
+  ASTNode* pNode = ast.find(myType);  <div class="comments">// retrieve ptr to ASTNode representing myType</div>
+  ast.pop();                          <div class="comments">// close current scope by poping top of scopeStack</div>
+
+  Build Process:
+  ==============
+  Required files
+  - ITokenCollection.h, ScopeStack.h
+
+  Build commands (either one)
+  - devenv CodeAnalysis.sln
+  - cl /EHsc /DTEST_ABSTRSYNTREE AbstrSynTree.cpp Utilities.cpp /link setargv.obj
+
+  Maintenance History:
+  ====================
+  ver 1.0 : 28 Feb 2019
+  - first release
+
+*/</div>
+
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;sstream&gt;
+#include &lt;unordered_map&gt;
+#include &lt;functional&gt;
+#include "../SemiExpression/ITokenCollection.h"
+#include "../ScopeStack/ScopeStack.h"
+
+namespace CodeAnalysis
+{
+  enum Access 
+  { 
+    publ, prot, priv 
+  };
+
+  enum DeclType 
+  { 
+    dataDecl, functionDecl, lambdaDecl, usingDecl 
+  };
+
+  struct DeclarationNode
+  {
+    Lexer::ITokenCollection* pTc = nullptr;
+    Access access_;
+    DeclType declType_;
+    std::string package_;
+    size_t line_;
+  };
+
+  struct ASTNode
+  {
+    using Type = std::string;
+    using Name = std::string;
+    using Package = std::string;
+    using Path = std::string;
+
+    ASTNode();
+    ASTNode(const Type& type, const Name& name);
+    ~ASTNode();
+    Type type_;
+    Type parentType_;
+    Name name_;
+    Package package_;
+    Path path_;
+    size_t startLineCount_;
+    size_t endLineCount_;
+    size_t complexity_;
+    std::vector&lt;ASTNode*&gt; children_;
+    std::vector&lt;DeclarationNode&gt; decl_;
+    std::vector&lt;Lexer::ITokenCollection*&gt; statements_;
+    std::string show(bool details = false);
+  };
+
+  class AbstrSynTree
+  <div class="clsClass">{
+  public:
+    using ClassName = std::string;
+    using TypeMap = std::unordered_map&lt;ClassName, ASTNode*&gt;;
+
+    AbstrSynTree(ScopeStack&lt;ASTNode*&gt;& stack);
+    ~AbstrSynTree();
+    ASTNode*& root();
+    void add(ASTNode* pNode);
+    ASTNode* find(const ClassName& type);
+    ASTNode* pop();
+    TypeMap& typeMap();
+  private:
+    TypeMap typeMap_;
+    ScopeStack&lt;ASTNode*&gt;& stack_;
+    ASTNode* pGlobalNamespace_;
+  };
+  <div class="comments">//----&lt; traverse AST and execute callobj on every node &gt;-------------</div></div>
+
+  template &lt;typename CallObj&gt;
+  void ASTWalk(ASTNode* pItem, CallObj co)
+  <div class="funClass">{
+    static size_t indentLevel = 0;
+    co(pItem, indentLevel);
+    auto iter = pItem-&gt;children_.begin();
+    ++indentLevel;
+    while (iter != pItem-&gt;children_.end())
+    {
+      ASTWalk(*iter, co);
+      ++iter;
+    }
+    --indentLevel;
+  }</div>
+  <div class="comments">//----&lt; traverse AST and execute callobj on every node &gt;-------------</div>
+
+  template &lt;typename CallObj&gt;
+  void ASTWalkNoIndent(ASTNode* pItem, CallObj co)
+  <div class="funClass">{
+    co(pItem);
+    auto iter = pItem-&gt;children_.begin();
+    while (iter != pItem-&gt;children_.end())
+    {
+      ASTWalkNoIndent(*iter, co);
+      ++iter;
+    }
+  }</div>
+  <div class="comments">//----&lt; compute complexities for each ASTNode &gt;--------------------</div>
+
+  inline void complexityWalk(ASTNode* pItem, size_t& count)
+  <div class="funClass">{
+    size_t inCount = ++count;
+    auto iter = pItem-&gt;children_.begin();
+    while (iter != pItem-&gt;children_.end())
+    {
+      complexityWalk(*iter, count);
+      ++iter;
+    }
+    pItem-&gt;complexity_ = count - inCount + 1;
+  }</div>
+  <div class="comments">//----&lt; compute complexities for each ASTNode &gt;--------------------</div>
+
+  inline void complexityEval(ASTNode* pNode)
+  <div class="funClass">{
+    size_t initialCount = 0;
+    complexityWalk(pNode, initialCount);
+  }</div>
+}
+
+struct foobar {
+
+};
+    </pre>
+  </body>
+</html>

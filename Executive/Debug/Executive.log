@@ -1,0 +1,4 @@
+﻿  Publisher.cpp
+c:\users\narendra\desktop\codepublisher\executive\publisher.cpp(176): warning C4273: 'ObjectFactory::createClient': inconsistent dll linkage
+  c:\users\narendra\desktop\codepublisher\executive\ipublisher.h(91): note: see previous definition of 'createClient'
+  Executive.vcxproj -> C:\Users\NARENDRA\Desktop\CodePublisher\Debug\Publisher.lib

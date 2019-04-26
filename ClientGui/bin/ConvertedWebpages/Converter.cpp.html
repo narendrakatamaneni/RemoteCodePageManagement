@@ -1,0 +1,521 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Converter.cpp</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="Converter.h.html">Converter.h</a><br/>
+      <a href="Logger.h.html">Logger.h</a><br/>
+      <a href="FileSystem.h.html">FileSystem.h</a><br/>
+      <a href="ConfigureParser.h.html">ConfigureParser.h</a><br/>
+      <a href="Parser.h.html">Parser.h</a><br/>
+      <a href="ActionsAndRules.h.html">ActionsAndRules.h</a><br/>
+      <a href="AbstrSynTree.h.html">AbstrSynTree.h</a><br/>
+      <a href="Display.h.html">Display.h</a><br/>
+    </h3>    <pre>
+<div class="comments">///////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// Converter.cpp : implements and provides test stub for Converter.h     //</div>
+<div class="comments">// ver 1.0                                                               //</div>
+<div class="comments">// Author        :Narendra Katamaneni, Syracuse University               //</div>
+<div class="comments">///////////////////////////////////////////////////////////////////////////</div>
+
+<div class="comments">/*
+* Package Operations:
+* -------------------
+* This package supports logging for multiple concurrent clients to a
+* single std::ostream.  It does this be enqueuing messages in a
+* blocking queue and dequeuing with a single thread that writes to
+* the std::ostream.
+*
+* Build Process:
+* --------------
+* Required Files: Converter.h,Logger.h,FileSystem.h,ConfigureParser.h,Parser.h,ActionsAndRules.h,
+* AbstrSynTree.h,Display.h
+*
+* Build Command: devenv logger.sln /rebuild debug
+*
+* Maintenance History:
+* --------------------
+* ver 1.0 : 11 Feb 2019
+* - added multiple stream capability
+*
+* Planned Additions and Changes:
+* ------------------------------
+* - none yet
+*/</div>
+
+#include "Converter.h"
+#include "../Logger/Logger.h"
+#include "../FileSystem/FileSystem.h"
+#include "../Parser/ConfigureParser.h"
+#include "../Parser/Parser.h"
+#include "../Parser/ActionsAndRules.h"
+#include "../AbstractSyntaxTree/AbstrSynTree.h"
+#include "../Display/Display.h"
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;unordered_map&gt;
+
+using namespace FileSystem;
+using namespace Logging;
+using namespace CodeAnalysis;
+
+<div class="comments">// -----&lt; default ctor &gt;--------------------------------------------------</div>
+CodeConverter::CodeConverter()
+<div class="funClass">{
+}</div>
+
+<div class="comments">// -----&lt; ctor to set dep table &gt;-----------------------------------------</div>
+CodeConverter::CodeConverter(const DependencyTable & dt) : dt_(dt)
+<div class="funClass">{
+  LoggerDebug::write("\n  CodeConverter initialized with DependencyTable\n");
+}</div>
+
+<div class="comments">// -----&lt; set dependency table function &gt;---------------------------------</div>
+void CodeConverter::setDepTable(const DependencyTable & dt)
+<div class="funClass">{
+  dt_ = dt;
+}</div>
+
+<div class="comments">// -----&lt; convert pre-set dependency table &gt;------------------------------</div>
+std::vector&lt;std::string&gt; CodeConverter::convert()
+<div class="funClass">{
+  if (!createOutpurDir()) {
+    LoggerDebug::write("\n\n  Failed to start conversion due to inability to create output directory");
+    LoggerDebug::write("\n  -- Output Directory: " + Path::getFullFileSpec(outputDir_));
+    return std::vector&lt;std::string&gt;();
+  }
+
+  LoggerDemo::write("\n\n  Converting files to webpages");
+  LoggerDebug::write("\n\n  Converting files to webpages");
+
+  LoggerDebug::write("\n  Output directory: " + Path::getFullFileSpec(outputDir_));
+  LoggerDemo::write("\n  Output directory: " + Path::getFullFileSpec(outputDir_));
+
+  for (auto entry : dt_) {
+    if (convertFile(entry.first)) {
+      LoggerDemo::write("\n  -- Converted: ");
+      LoggerDebug::write("\n  -- Converted: ");
+    }
+    else {
+      LoggerDemo::write("\n  -- Failed:    ");
+      LoggerDebug::write("\n  -- Failed:    ");
+    }
+
+    std::string filename = Path::getName(entry.first);
+    LoggerDebug::write(filename);
+    LoggerDemo::write(filename);
+  }
+  LoggerDebug::write("\n");
+  LoggerDemo::write("\n");
+  return convertedFiles_;
+}</div>
+
+<div class="comments">// -----&lt; convert single file given path &gt;----------------------------------</div>
+std::string CodeConverter::convert(const std::string & filepath)
+<div class="funClass">{
+  if (!createOutpurDir()) {
+    LoggerDebug::write("\n\n  Failed to start conversion due to inability to create output directory");
+    LoggerDebug::write("\n  -- Output Directory: " + Path::getFullFileSpec(outputDir_));
+    return "";
+  }
+
+  LoggerDemo::write("\n\n  Converting files to webpages");
+  LoggerDebug::write("\n\n  Converting files to webpages");
+
+  LoggerDebug::write("\n  Output directory: " + Path::getFullFileSpec(outputDir_));
+  LoggerDemo::write("\n  Output directory: " + Path::getFullFileSpec(outputDir_));
+
+  if (convertFile(filepath)) {
+    LoggerDemo::write("\n  -- Converted: ");
+    LoggerDebug::write("\n  -- Converted: ");
+  }
+  else {
+    LoggerDemo::write("\n  -- Failed:    ");
+    LoggerDebug::write("\n  -- Failed:    ");
+  }
+
+  std::string filename = Path::getName(filepath);
+  LoggerDebug::write(filename);
+  LoggerDemo::write(filename);
+
+  return filename + ".html";
+}</div>
+
+<div class="comments">// -----&lt; Add dependency to dependency tables and convert all the files &gt;----------------------------------------</div>
+std::vector&lt;std::string&gt; CodeConverter::convert(const std::vector&lt;std::string&gt;& files)
+<div class="funClass">{
+  clear();
+  dt_ = DependencyTable(files);
+  return convert();
+}</div>
+
+<div class="comments">// -----&lt; get set output directory &gt;----------------------------------------</div>
+const std::string & CodeConverter::outputDir() const
+<div class="funClass">{
+  return outputDir_;
+}</div>
+
+<div class="comments">// -----&lt; set output directory &gt;--------------------------------------------</div>
+void CodeConverter::outputDir(const std::string & dir)
+<div class="funClass">{
+  outputDir_ = dir;
+}</div>
+
+<div class="comments">// -----&lt; create output directory &gt;-----------------------------------------</div>
+<div class="comments">/* returns success of creation. it could fail if dir is sys protected */
+bool CodeConverter::createOutpurDir()
+<div class="funClass">{
+  if (!Directory::exists(outputDir_)) {
+    LoggerDebug::write("\n  Creating output directory. Path: " + Path::getFullFileSpec(outputDir_));
+    return Directory::create(outputDir_);
+  }
+  LoggerDebug::write("\n  Output directory already exists. Proceeding...");
+  return true;
+}</div>
+
+<div class="comments">// -----&lt; get list of converted files &gt;-------------------------------------</div>
+const std::vector&lt;std::string&gt; CodeConverter::convertedFiles() const
+<div class="funClass">{
+  return convertedFiles_;
+}</div>
+
+void CodeConverter::clear()
+<div class="funClass">{
+  convertedFiles_.clear();
+  dt_.clear();
+}</div>
+
+<div class="comments">// -----&lt; private - read file and create webpage &gt;--------------------------</div>
+bool CodeConverter::convertFile(std::string file)
+<div class="funClass">{
+  std::ifstream in(file);
+  if (!in.is_open() || !in.good()) {
+    LoggerDebug::write("Error -- unable to read file, path may be invalid.");
+    in.close();
+    return false;
+  }
+
+  ConfigParseForCodeAnal configure;
+  Parser* pParser = configure.Build();
+ 
+  std::string name;
+  if (pParser)
+  {
+	  name = FileSystem::Path::getName(file);
+	  if (!configure.Attach(file))
+	  {
+		  std::cout &lt;&lt; "\n  could not open file " &lt;&lt; name &lt;&lt; std::endl;
+	  }
+  }
+  else
+  {
+	  std::cout &lt;&lt; "\n\n  Parser not built\n\n";
+	  return 1;
+  }
+
+  Repository* pRepo = Repository::getInstance();
+  pRepo-&gt;package() = name;
+
+  while (pParser-&gt;next())
+  {
+	  pParser-&gt;parse();
+  }
+  std::cout &lt;&lt; "\n";
+
+  ASTNode* pGlobalScope = pRepo-&gt;getGlobalScope();
+  
+  collectDependencies(pGlobalScope, file);
+  std::cout &lt;&lt; "Dependent files is/are : \n" &lt;&lt; std::endl;
+
+  for (auto dep : dt_[file]) {
+	  std::cout &lt;&lt; Path::getValueInQuotes(dep) &lt;&lt; std::endl;
+  }
+
+  for (auto dep : dt_[file]) {
+	  processDependencyFiles(Path::getFullFileSpec(Path::getPath(file) + Path::getDependencyPath(dep)));
+	}
+
+  complexityEval(pGlobalScope);
+
+  TreeWalk(pGlobalScope);
+ 
+
+  std::string filename = Path::getName(file);
+  std::string outputPath = outputDir_ + filename + ".html";
+  out_.open(outputPath, std::ofstream::out);
+  if (!out_.is_open() || !out_.good()) {
+    LoggerDebug::write("Error -- unable to open output file for writing.");
+    in.close();
+    return false;
+  }
+
+  htmlOpeartions(filename, file, pGlobalScope, in);
+
+  out_.close();
+
+  convertedFiles_.push_back(outputPath);
+  return true;
+}</div>
+
+<div class="comments">// -----&lt; private -processes the files which have dependency on other files &gt;--------------------------</div>
+bool CodeConverter::processDependencyFiles(std::string file) <div class="funClass">{
+
+	std::cout &lt;&lt; "Converting dependency file... " &lt;&lt; std::endl;
+
+	std::ifstream in(file);
+	if (!in.is_open() || !in.good()) {
+		LoggerDebug::write("Error -- unable to read file, path may be invalid.");
+		in.close();
+		return false;
+	}
+
+	ConfigParseForCodeAnal configure;
+	Parser* pParser = configure.Build();
+
+
+	std::string name;
+	if (pParser)
+	{
+		name = FileSystem::Path::getName(file);
+		if (!configure.Attach(file))
+		{
+			std::cout &lt;&lt; "\n  could not open file " &lt;&lt; name &lt;&lt; std::endl;
+		}
+	}
+	else
+	{
+		std::cout &lt;&lt; "\n\n  Parser not built\n\n";
+		return 1;
+	}
+
+	Repository* pRepo = Repository::getInstance();
+	pRepo-&gt;package() = file;
+
+
+	while (pParser-&gt;next())
+	{
+		pParser-&gt;parse();
+	}
+	std::cout &lt;&lt; "\n";
+
+	ASTNode* pGlobalScope = pRepo-&gt;getGlobalScope();
+
+	complexityEval(pGlobalScope);
+
+	TreeWalk(pGlobalScope);
+
+
+	std::string filename = Path::getName(file);
+	std::string outputPath = outputDir_ + filename + ".html";
+	out_.open(outputPath, std::ofstream::out);
+	if (!out_.is_open() || !out_.good()) {
+		LoggerDebug::write("Error -- unable to open output file for writing.");
+		in.close();
+		return false;
+	}
+
+	htmlOpeartions(filename, file, pGlobalScope, in);
+	out_.close();
+
+	return true;
+
+}</div>
+
+
+void CodeConverter::htmlOpeartions(const std::string& filename, std::string file, CodeAnalysis::ASTNode* pGlobalScope, std::ifstream & in) <div class="funClass">{
+
+	<div class="comments">// write everything to file </div>
+	addPreCodeHTML(filename);
+	addDependencyLinks(file);
+	addPreTag();
+	writeLine(pGlobalScope, in);
+	addClosingTags();
+}</div>
+
+
+
+<div class="comments">// -----&lt; collect dependencies in a file &gt;--------------------------</div>
+void CodeConverter::collectDependencies(CodeAnalysis::ASTNode* pGlobalScope, std::string file) <div class="funClass">{
+
+	<div class="comments">// Add all file dependencies to Dependency Table</div>
+	auto iter2 = pGlobalScope-&gt;statements_.begin();
+	while (iter2 != pGlobalScope-&gt;statements_.end()) {
+		std::string dependency = (*iter2)-&gt;ToString();
+		if (std::string::npos == dependency.find('&lt;') && std::string::npos == dependency.find("ifdef") &&
+			std::string::npos == dependency.find("endif") && std::string::npos == dependency.find("pragma") && std::string::npos == dependency.find("ifndef") &&
+			std::string::npos == dependency.find("define")) {
+			dt_.addDependency(file, (*iter2)-&gt;ToString());
+		}
+		++iter2;
+	}
+
+}</div>
+
+<div class="comments">// -----&lt; writes a line into output file &gt;--------------------------</div>
+void CodeConverter::writeLine(CodeAnalysis::ASTNode* pGlobalScope, std::ifstream & in) <div class="funClass">{
+
+	Display d;
+
+	std::unordered_map &lt; std::size_t, TypeInfo&gt; result;
+
+	std::unordered_map &lt; std::size_t, TypeInfo&gt; resultMap = d.collectFullDetails(pGlobalScope, result);
+	int count = 1;
+
+	while (in.good()) {
+		std::string line;
+		while (std::getline(in, line)) {
+			skipSpecialChars(line);
+			d.handlecomments(line);
+			d.handleMultipleComments(line);
+
+			if (resultMap.find(count) == resultMap.end()) {
+				out_ &lt;&lt; line &lt;&lt; std::endl;
+				count++;
+				continue;
+			}
+			else {
+
+				TypeInfo value = resultMap[count];
+
+				if (value == TypeInfo::function_begin) {
+					d.handlefunctions(line);
+				}
+				else if (value == TypeInfo::class_begin) {
+					d.handleclass(line);
+				}
+				else if (value == TypeInfo::end_scope) {
+					d.handleendscope(line);
+				}
+
+				out_ &lt;&lt; line &lt;&lt; std::endl;
+				count++;
+			}
+		}
+	}
+}</div>
+
+<div class="comments">// -----&lt; private - add generic HTML preliminary markup &gt;-------------------</div>
+void CodeConverter::addPreCodeHTML(const std::string& title)
+<div class="funClass">{
+  out_ &lt;&lt; "&lt;DOCTYPE !HTML&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "&lt;html&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "  &lt;head&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "    &lt;Title&gt;" &lt;&lt; title &lt;&lt; "&lt;/Title&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "    &lt;style&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "      body {" &lt;&lt; std::endl;
+  out_ &lt;&lt; "        padding:15px 40px;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "        font-family: Consolas;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "        font-size: 1.25em;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "        font-weight: normal;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "      }" &lt;&lt; std::endl;
+  out_ &lt;&lt; "      &lt;/style&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "  &lt;link rel = \"stylesheet\" type = \"text/css\" href = \"style.css\" &gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "  &lt;script src=\"script.js\"&gt; &lt;/script&gt; " &lt;&lt; std::endl;
+  out_ &lt;&lt; "  &lt;/head&gt;" &lt;&lt; std::endl &lt;&lt; std::endl;
+  out_ &lt;&lt; "  &lt;body&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; " &lt;input type =\"submit\" value= \"Comments\" id =\"cmt\" onclick=\"togglevisibility('comments')\" &gt;&lt;/input&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; " &lt;input type =\"submit\" value= \"Class\"  id =\"cls\" onclick=\"togglevisibility('clsClass')\" &gt;&lt;/input&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; " &lt;input type =\"submit\" value= \"Function\" id =\"fun\" onclick=\"togglevisibility('funClass')\" &gt;&lt;/input&gt;" &lt;&lt; std::endl;
+}</div>
+
+<div class="comments">// -----&lt; private - add pre tag &gt;------------------------------------------</div>
+<div class="comments">/* seperated into seperate function to allow for dependencies addition
+*  before the actual code of the file */
+void CodeConverter::addPreTag()
+<div class="funClass">{
+  out_ &lt;&lt; "    &lt;pre&gt;" &lt;&lt; std::endl;
+}</div>
+
+<div class="comments">// -----&lt; private - add depedency links markup code &gt;----------------------</div>
+void CodeConverter::addDependencyLinks(std::string file)
+<div class="funClass">{
+  std::string filename = Path::getName(file);
+  if (!dt_.has(file)) { <div class="comments">// in case of single file conversion</div>
+    LoggerDebug::write("\n    No entry found in DependencyTable for [" + filename + "]. Skipping dependency links..");
+    return;
+  }
+
+  if (dt_[file].size() == 0) { <div class="comments">// in case the file has no dependencies</div>
+    LoggerDebug::write("\n    No dependencies found for [" + filename + "]. Skipping dependency links..");
+    return;
+  }
+
+  out_ &lt;&lt; "    &lt;h3&gt;Dependencies: " &lt;&lt; std::endl;
+  for (auto dep : dt_[file]) {
+		
+		out_ &lt;&lt; "      &lt;a href=\"" &lt;&lt; Path::getValueInQuotes(dep) &lt;&lt; ".html\"&gt;" &lt;&lt; Path::getValueInQuotes(dep) &lt;&lt; "&lt;/a&gt;" &lt;&lt; "&lt;br/&gt;" &lt;&lt; std::endl;
+  }
+  out_ &lt;&lt; "    &lt;/h3&gt;";
+}</div>
+
+<div class="comments">// -----&lt; private - add generic HTML markup closing tags &gt;-----------------</div>
+void CodeConverter::addClosingTags()
+<div class="funClass">{
+  out_ &lt;&lt; "    &lt;/pre&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "  &lt;/body&gt;" &lt;&lt; std::endl;
+  out_ &lt;&lt; "&lt;/html&gt;" &lt;&lt; std::endl;
+}</div>
+
+<div class="comments">// -----&lt; private - replace HTML special chars &gt;---------------------------</div>
+<div class="comments">/* note: the function uses while loop to make sure ALL special characters
+*  are replaced instead of just the first encounter. */
+void CodeConverter::skipSpecialChars(std::string & line)
+<div class="funClass">{
+  size_t pos = line.npos;
+  while((pos = line.find('&lt;')) != line.npos) 
+    line.replace(pos, 1, "&lt;");
+
+  while ((pos = line.find('&gt;')) != line.npos)
+    line.replace(pos, 1, "&gt;");
+}</div>
+
+
+
+#ifdef TEST_CONVERTER
+
+<div class="comments">// -----&lt; test stub for converter class &gt;-----------------------------------</div>
+int main() <div class="funClass">{
+  LoggerDebug::attach(&std::cout);
+  LoggerDebug::start();
+
+  LoggerDebug::title("Testing CodeConverter functions");
+
+  LoggerDebug::stop(); <div class="comments">// do not log DependencyTable logs</div>
+  
+  DependencyTable dt;
+  dt.addDependency("Converter.h", "Converter.cpp");
+  dt.addDependency("Converter.cpp", "Converter.h");
+  dt.addDependency("A.h", "A.h");
+  
+  LoggerDebug::start(); <div class="comments">// log from now on</div>
+
+  CodeConverter cc(dt);
+  dt.display();
+  LoggerDebug::write("\n");
+  <div class="comments">//cc.outputDir("C:\\windows\\system32\\"); // will trigger errors which are handled</div>
+  cc.convert();
+
+  LoggerDebug::stop();
+  return 0;
+}</div>
+
+#endif
+    </pre>
+  </body>
+</html>

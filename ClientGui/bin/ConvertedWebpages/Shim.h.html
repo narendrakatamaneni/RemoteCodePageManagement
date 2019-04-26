@@ -1,0 +1,93 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Shim.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="IPublisher.h.html">IPublisher.h</a><br/>
+    </h3>    <pre>
+<div class="comments">/////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// Shim.h  : defines a warpper for ICppClass which works with .NET code    //</div>
+<div class="comments">// ver 1.0                                                                 //</div>
+<div class="comments">// Author  : Narendra Katamaneni, CSE687, Syracuse University			   //</div>
+<div class="comments">/////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">/*
+*  Package Description:
+* ======================
+*  This package defines Shim class which can be used by .NET applications.
+*  In this demo, Shim is used in WPF project to allow making calls from
+*  WPF C# code to CppClass native C++ code. The Shim is a mangaged (.NET)
+*  wrapper around ICppClass interface which can make calls to native C++
+*  classes and, in the same time, can be called by any .NET code (C# here).
+*
+*  Public Interface:
+* ===================
+*  Shim localShim;
+*  localShim.Start();
+*  localShim.PostMessage("my message");
+*  String^ msg = localShim.GetMessage();
+*
+*  Required Files:
+* =================
+*  Shim.h Shim.cpp ICppLibrary.h
+*
+*  Build Command:
+* ================
+*  msbuild Shim.vcxproj
+*
+*  Maintainence History:
+* =======================
+*  ver 1.0 - March 23rd 2018
+*    - first release
+*
+*/</div>
+
+#pragma once
+
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include "../Executive/IPublisher.h"
+
+using namespace System;
+using namespace System::Collections::Generic;
+
+<div class="comments">// 'public ref' identifier tells the compiler this is</div>
+<div class="comments">// a managed class, not native C++ class. this class</div>
+<div class="comments">// has to be managed for the C# code in WPF to be able</div>
+<div class="comments">// to use it. You CAN define native classes here but in</div>
+<div class="comments">// this demo there is no point to do so. </div>
+public ref class Shim <div class="clsClass">{
+public:
+	Shim();
+	~Shim();
+	virtual void SetCmd(List&lt;String^&gt;^ argv);
+	virtual void Convert();
+	virtual List&lt;String^&gt;^ GetConvertedFiles();
+	<div class="comments">//virtual void GetConvertedFiles(const std::string& msg);</div>
+
+private:
+	<div class="comments">// convert System::String to std::string</div>
+	std::string sysStrToStdStr(String^ str);
+	<div class="comments">// convert std::string to System::String</div>
+	String^ stdStrToSysStr(const std::string& str);
+	<div class="comments">// this will point to CppClass when instantiated through the ObjectFactory</div>
+	IPublisher* client;
+};
+    </pre>
+  </body>
+</html>

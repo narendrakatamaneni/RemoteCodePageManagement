@@ -1,0 +1,91 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>DependencyTable.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <pre>
+#pragma once
+<div class="comments">///////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// DependencyTable.h : defines dependency table structure                //</div>
+<div class="comments">// ver 1.0                                                               //</div>
+<div class="comments">// Author        :Narendra Katamaneni, Syracuse University               //</div>
+<div class="comments">///////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">/*
+*  Package Operations:
+* =======================
+*  This package defines DependencyTable class which is used to hold files
+*  relationships after dependency analysis is performed. It is simply a
+*  wrapper around std::unordered_map which uses string key and vector
+*  value. Therefore, every file in the analysis will point to a vector
+*  of all the files it depends upon. 
+*
+*
+*  Required Files:
+* =======================
+*  
+*
+*  Maintainence History:
+* =======================
+*  ver 1.0 - 11 Feb 2019
+*  - first release
+*/</div>
+
+#include &lt;unordered_map&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+class DependencyTable
+<div class="clsClass">{
+public:
+  using file = std::string;
+  using files = std::vector&lt;file&gt;;
+  using dependencies = std::vector&lt;file&gt;;
+  using iterator = std::unordered_map&lt;file, dependencies&gt;::iterator;
+
+
+  DependencyTable();
+  DependencyTable(const files& list);
+  ~DependencyTable();
+
+  bool has(const std::string& file);
+
+  void addDependency(file filename, file dependency);
+  void removeDependency(file filename, file dependency);
+
+  void removeEntry(file filename);
+
+  const dependencies& getDependencies(file filename) const;
+  const dependencies& operator[](const file& filename) const;
+
+  <div class="comments">// these two functions allow 'for' loops in the form of</div>
+  <div class="comments">// for(auto entry : dt) {...}</div>
+  iterator begin();
+  iterator end();
+  void clear() { table_.clear(); }</div>
+
+  files getFiles() const;
+
+  void display();
+
+private:
+  std::unordered_map&lt;file, dependencies&gt; table_;
+};
+</div>
+    </pre>
+  </body>
+</html>

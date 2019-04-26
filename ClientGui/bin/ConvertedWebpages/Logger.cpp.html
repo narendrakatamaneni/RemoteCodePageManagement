@@ -1,0 +1,187 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Logger.cpp</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="Logger.h.html">Logger.h</a><br/>
+      <a href="StringUtilities.h.html">StringUtilities.h</a><br/>
+    </h3>    <pre>
+<div class="comments">/////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// Logger.cpp - log text messages to std::ostream                  //</div>
+<div class="comments">// ver 1.0                                                         //</div>
+<div class="comments">// Author:     Narendra Katamaneni, Syracuse University            //</div>
+<div class="comments">/////////////////////////////////////////////////////////////////////</div>
+
+#include &lt;functional&gt;
+#include &lt;fstream&gt;
+#include &lt;windows.h&gt;
+#include "Logger.h"
+#include "../StringUtilities/StringUtilities.h"
+
+using namespace Logging;
+
+<div class="comments">//----&lt; send text message to std::ostream &gt;--------------------------</div>
+
+void Logger::write(const std::string& msg)
+<div class="funClass">{
+  if(_ThreadRunning)
+    _queue.enQ(msg);
+}</div>
+void Logger::title(const std::string& msg, char underline)
+<div class="funClass">{
+  std::string temp = "\n  " + msg + "\n " + std::string(msg.size() + 2, underline);
+  write(temp);
+}</div>
+<div class="comments">//----&lt; attach logger to existing std::ostream &gt;---------------------</div>
+
+bool Logger::attach(std::ostream* pOut) 
+<div class="funClass">{ 
+  if (_ThreadRunning) return false;
+  _streams.push_back(pOut); 
+  return true;
+}</div>
+
+<div class="comments">//-----&lt; detach existing logger to stop writing &gt;--------------------</div>
+bool Logger::detach(std::ostream * pOut)
+<div class="funClass">{
+  if (_ThreadRunning) return false;
+	auto stream = std::find(_streams.begin(), _streams.end(), pOut);
+	if(stream != _streams.end())
+		_streams.erase(stream);
+  return true;
+}</div>
+<div class="comments">//----&lt; start logging &gt;----------------------------------------------</div>
+
+void Logger::start()
+<div class="funClass">{
+  if (_ThreadRunning)
+    return;
+  _ThreadRunning = true;
+  std::function&lt;void()&gt; tp = [=]() {
+    while (true)
+    {
+      std::string msg = _queue.deQ();
+      if (msg == "quit")
+      {
+        _ThreadRunning = false;
+        break;
+      }
+	  for (auto stream : _streams)
+		  *stream &lt;&lt; msg;
+    }
+  };
+  std::thread thr(tp);
+  thr.detach();
+}</div>
+bool Logger::running()
+<div class="funClass">{
+  return _ThreadRunning;
+}</div>
+void Logger::pause(bool doPause)
+<div class="funClass">{
+  if (doPause)
+  {
+    _Paused = true;
+    ::SuspendThread(_pThr-&gt;native_handle());
+  }
+  else
+  {
+    _Paused = false;
+    ::ResumeThread(_pThr-&gt;native_handle());
+  }
+}</div>
+<div class="comments">//----&lt; is logger currently paused? &gt;--------------------------------</div>
+
+bool Logger::paused()
+<div class="funClass">{
+  return _Paused;
+}</div>
+<div class="comments">//----&lt; wait for logging to empty input queue &gt;----------------------</div>
+void Logging::Logger::flush()
+<div class="funClass">{
+  if (_ThreadRunning && !_Paused)
+  {
+    while (_queue.size() &gt; 0)
+      ;
+    for (auto pStream : _streams)
+      pStream-&gt;flush();
+  }
+}</div>
+<div class="comments">//----&lt; stop logging &gt;-----------------------------------------------</div>
+
+void Logger::stop(const std::string& msg)
+<div class="funClass">{
+  if (_ThreadRunning)
+  {
+    if(msg != "")
+      write(msg);
+    write("quit");  <div class="comments">// request thread to stop</div>
+    while (_ThreadRunning)
+      <div class="comments">/* wait for thread to stop*/
+      ;
+  }
+}</div>
+<div class="comments">//----&lt; stop logging thread &gt;----------------------------------------</div>
+
+Logger::~Logger()
+<div class="funClass">{
+  stop(); 
+}</div>
+
+struct Cosmetic
+{
+  ~Cosmetic() { std::cout &lt;&lt; "\n\n"; }</div>
+} cosmetic;
+
+#ifdef TEST_LOGGER
+
+<div class="comments">//using Util = Utilities;</div>
+
+int main()
+<div class="funClass">{
+  <div class="comments">//Util::Title("Testing Logger Class");</div>
+  Logger log;
+  log.attach(&std::cout);
+  log.write("\n  won't get logged - not started yet");
+  log.start();
+  log.title("Testing Logger Class", '=');
+  log.write("\n  one");
+  log.write("\n  two");
+  log.write("\n  fini");
+  log.stop();
+  log.write("\n  won't get logged - stopped");
+  log.start();
+  log.write("\n  starting again");
+  log.write("\n  and stopping again");
+  log.stop("\n  terminating now");
+
+  StaticLogger&lt;1&gt;::attach(&std::cout);
+  StaticLogger&lt;1&gt;::start();
+  StaticLogger&lt;1&gt;::write("\n");
+  StaticLogger&lt;1&gt;::title("Testing StaticLogger class");
+  StaticLogger&lt;1&gt;::write("\n  static logger at work");
+  Logger& logger = StaticLogger&lt;1&gt;::instance();
+  logger.write("\n  static logger still at work");
+  logger.stop("\n  stopping static logger");
+}</div>
+
+#endif
+    </pre>
+  </body>
+</html>

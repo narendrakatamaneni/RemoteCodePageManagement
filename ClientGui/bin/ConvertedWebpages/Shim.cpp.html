@@ -1,0 +1,152 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Shim.cpp</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="Shim.h.html">Shim.h</a><br/>
+      <a href="string.h.html">string.h</a><br/>
+    </h3>    <pre>
+<div class="comments">/////////////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// Shim.cpp       : provides definitions and test stub for Shim.h          //</div>
+<div class="comments">// ver 1.0                                                                 //</div>
+<div class="comments">// Author         :Narendra Katamaneni,CSE687, Syracuse University		   //</div>
+<div class="comments">/////////////////////////////////////////////////////////////////////////////</div>
+
+<div class="comments">/*  Package Description :
+*======================
+*This package defines Shim class which can be used by.NET applications.
+*  In this demo, Shim is used in WPF project to allow making calls from
+*  WPF C# code to CppClass native C++ code.The Shim is a mangaged(.NET)
+*  wrapper around ICppClass interface which can make calls to native C++
+*  classes and, in the same time, can be called by any.NET code(C# here).
+*
+*  Public Interface :
+*================== =
+*Shim localShim;
+*localShim.Start();
+*localShim.PostMessage("my message");
+*String^ msg = localShim.GetMessage();
+*
+*  Required Files :
+*================ =
+*Shim.h Shim.cpp 
+*
+*  Build Command :
+*================
+*msbuild Shim.vcxproj
+*
+*  Maintainence History :
+*====================== =
+*ver 1.0 - March 23rd 2018
+* -first release
+*
+*/</div>
+#include "Shim.h"
+#include "string.h"
+#include &lt;vector&gt;
+
+<div class="comments">// -----&lt; Shim constructor - instantiates ICppClass &gt;------------------</div>
+Shim::Shim() <div class="funClass">{
+	Console::Write("\n  Shim created ");
+	ObjectFactory factory;
+	<div class="comments">// use factory to get instance of Publisher</div>
+	client = factory.createClient();
+	Console::Write("\n  Shim instantiated Publisher as IPublisher* ");
+}</div>
+
+
+<div class="comments">// -----&lt; Shim destructor - deletes ICppClass &gt;------------------------</div>
+Shim::~Shim() <div class="funClass">{
+	delete client;
+	Console::Write("\n  Shim destroyed\n\n");
+}</div>
+void Shim::SetCmd(List&lt;String^&gt;^ argv) <div class="funClass">{
+
+	int argc = argv-&gt;Count;
+	char ** arg = new char*[argc];
+	for (int i = 0;i &lt; argc;i++) {
+		std::string ar = sysStrToStdStr(argv[i]);
+		arg[i] = new char[argv[i]-&gt;Length];
+		strcpy_s(arg[i], argv[i]-&gt;Length + 1, ar.c_str());
+	}
+	client-&gt;SetCmd(argc, arg);
+	delete[] arg;
+}</div>
+void Shim::Convert() <div class="funClass">{
+
+}</div>
+
+List&lt;String^&gt;^ Shim::GetConvertedFiles() <div class="funClass">{
+	std::vector&lt;std::string&gt; strvec = client-&gt;GetConvertFiles();
+	std::cout &lt;&lt; "size of converted files..." &lt;&lt; strvec.size() &lt;&lt; std::endl;
+
+	List&lt;String^&gt;^ list = gcnew List&lt;String^&gt;();
+
+	for (int i = 0;i &lt; strvec.size();i++) {
+		String^ str = stdStrToSysStr(strvec[i]);
+		list-&gt;Add(str);
+	}
+	return list;
+}</div>
+
+<div class="comments">//----&lt; convert std::string to System.String &gt;-------------------------</div>
+String^ Shim::stdStrToSysStr(const std::string& str) <div class="funClass">{
+	return gcnew String(str.c_str());
+}</div>
+
+<div class="comments">//----&lt; convert System.String to std::string &gt;-------------------------</div>
+std::string Shim::sysStrToStdStr(String^ str) <div class="funClass">{
+	std::string temp;
+	for (int i = 0; i &lt; str-&gt;Length; ++i)
+		temp += char(str[i]);
+	return temp;
+}</div>
+
+
+<div class="comments">// -----&lt; Shim Test Stub &gt;---------------------------------------------</div>
+#ifdef TEST_SHIM
+
+int main(array&lt;System::String^&gt; ^args) <div class="funClass">{
+	Shim localShim;  <div class="comments">// C++ style construction</div>
+	<div class="comments">// Shim^ shim = gcnew Shim(); // managed heap allocation and construction</div>
+	localShim.Start();
+
+	Console::Write("\n\n  Shim posting 10 messages to CppClass:");
+	Console::Write("\n =======================================\n");
+	for (int i = 0; i &lt; 10; i++)
+		localShim.PostMessage("Message from C++/CLI Shim Test Stub");
+
+	<div class="comments">// sleep for 100ms to allow better formatted output</div>
+	System::Threading::Thread::Sleep(100);
+
+	Console::Write("\n\n  Shim getting 10 messages from CppClass:");
+	Console::Write("\n =========================================\n");
+	for (int i = 0; i &lt; 10; i++)
+		Console::Write("\n  Shim got message from CppClass: {0}", localShim.GetMessage());
+
+	Console::Write("\n\n  Finished demonstration.");
+	Console::Write("\n  Shim dtor is automatically called after 'main' goes out of scope.\n");
+
+	return 0;
+} <div class="comments">// NOTE: Shim destructor will automatically be called here just like in native C++</div></div>
+
+#endif
+    </pre>
+  </body>
+</html>

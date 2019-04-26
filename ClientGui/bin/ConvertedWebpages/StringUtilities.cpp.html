@@ -1,0 +1,69 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>StringUtilities.cpp</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="StringUtilities.h.html">StringUtilities.h</a><br/>
+      <a href="CodeUtilities.h.html">CodeUtilities.h</a><br/>
+    </h3>    <pre>
+<div class="comments">///////////////////////////////////////////////////////////////////////</div>
+<div class="comments">// StringUtilities.cpp - small, generally useful, helper classes     //</div>
+<div class="comments">// ver 1.0                                                           //</div>
+<div class="comments">// Language:    C++, Visual Studio 2017                              //</div>
+<div class="comments">// Application: Most Projects, CSE687 - Object Oriented Design       //</div>
+<div class="comments">// Author:      Narendra Katamaneni, Syracuse University,          //</div>
+<div class="comments">//                                              //</div>
+<div class="comments">///////////////////////////////////////////////////////////////////////</div>
+
+#include &lt;cctype&gt;
+#include &lt;iostream&gt;
+#include "StringUtilities.h"
+#include "../CodeUtilities/CodeUtilities.h"
+
+#ifdef TEST_STRINGUTILITIES
+
+using namespace Utilities;
+
+int main()
+<div class="funClass">{
+	Title("Testing Utilities Package");
+	putline();
+
+	title("test split(std::string, ',')");
+
+	std::string test = "a, \n, bc, de, efg, i, j k lm nopq rst";
+	std::cout &lt;&lt; "\n  test string = " &lt;&lt; test;
+
+	std::vector&lt;std::string&gt; result = split(test);
+	showSplits(result);
+
+	title("test split(std::string, ' ')");
+
+	std::cout &lt;&lt; "\n  test string = " &lt;&lt; test;
+
+	result = split(test, ' ');
+	showSplits(result);
+
+	putline(2);
+	return 0;
+}</div>
+#endif
+    </pre>
+  </body>
+</html>
