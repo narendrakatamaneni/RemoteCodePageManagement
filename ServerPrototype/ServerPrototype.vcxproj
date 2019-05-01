@@ -166,6 +166,9 @@
     <ProjectReference Include="..\CppCommWithFileXfer\Utilities\Utilities.vcxproj">
       <Project>{462b43b2-8b13-4178-bf2a-903f76f1985c}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Executive\Executive.vcxproj">
+      <Project>{d0da5ded-c11c-456d-afdc-ebc3a93f23ca}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\FileSystem-Windows\FileSystemDemo\FileSystemDemo.vcxproj">
       <Project>{ef4a3188-ca93-45a2-ab52-7548669e3aa8}</Project>
     </ProjectReference>

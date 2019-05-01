@@ -1,2 +1,4 @@
 ﻿  ServerPrototype.cpp
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (CodePublisher.vcxproj, Executive.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+Dependencies.lib(DependencyTable.obj) : warning LNK4099: PDB 'Dependencies.pdb' was not found with 'Dependencies.lib(DependencyTable.obj)' or at 'C:\Users\NARENDRA\Desktop\Project4\RemoteCodePageManagement\Debug\Dependencies.pdb'; linking object as if no debug info
   ServerPrototype.vcxproj -> C:\Users\NARENDRA\Desktop\Project4\RemoteCodePageManagement\Debug\ServerPrototype.exe

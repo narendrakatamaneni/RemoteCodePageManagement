@@ -137,6 +137,14 @@ std::vector<std::string> CodeConverter::convert(const std::vector<std::string>& 
   return convert();
 }
 
+std::vector<std::string> CodeConverter::convertFile(std::vector<std::string> files)
+{
+	clear();
+	dt_ = DependencyTable(files);
+	return convert();
+}
+
+
 // -----< get set output directory >----------------------------------------
 const std::string & CodeConverter::outputDir() const
 {

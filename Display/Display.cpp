@@ -76,11 +76,11 @@ void Display::handlecomments(std::string & line)
 	if (pos == line.npos) return;
 	if (pos == line.size() - 1) return;
 	if (line[pos + 1] == '/') {
-		line.replace(pos, 1, "<div class=\"comments\">/");
-		line += "</div>";
+		line.replace(pos, 1, "<span class=\"comments\">/");
+		line += "</span>";
 	}
 	if (line[pos + 1] == '*') {
-		line.replace(pos, 1, "<div class=\"comments\">/");
+		line.replace(pos, 1, "<span class=\"comments\">/");
 	}
 
 }
@@ -92,7 +92,7 @@ void Display::handleMultipleComments(std::string & line)
 	if (position == line.npos) return;
 	if (position == line.size() - 1) return;
 	if (line[position + 1] == '/') {
-		line += "</div>";
+		line += "</span>";
 	}
 
 }
@@ -130,7 +130,7 @@ void Display::handlefunctions(std::string &line) {
 	size_t pos = line.find('{');
 	if (pos == line.npos) return;
 
-	line.replace(pos, 1, "<div class=\"funClass\">{");
+	line.replace(pos, 1, "<span class=\"funClass\">{");
 
 }
 
@@ -139,14 +139,14 @@ void Display::handleclass(std::string &line) {
 	size_t pos = line.find('{');
 	if (pos == line.npos) return;
 
-	line.replace(pos, 1, "<div class=\"clsClass\">{");
+	line.replace(pos, 1, "<span class=\"clsClass\">{");
 
 }
 
 // <------- handles end scope for classes and functions in a file --------------->
 void Display::handleendscope(std::string & line)
 {
-	line += "</div>";
+	line += "</span>";
 }
 
 #ifdef TEST_DISPLAY

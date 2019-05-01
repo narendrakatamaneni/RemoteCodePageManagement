@@ -1,5 +1,5 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef LOGGERA_H
+#define LOGGERA_H
 /////////////////////////////////////////////////////////////////////
 // Logger.h - log text messages to std::ostream                    //
 // ver 1.0                                                         //

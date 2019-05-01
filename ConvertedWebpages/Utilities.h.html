@@ -1,0 +1,126 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Utilities.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <pre>
+#ifndef UTILITIES_H
+#define UTILITIES_H
+<span class="comments">///////////////////////////////////////////////////////////////////////</span>
+<span class="comments">// Utilities.h - small, generally useful, helper classes             //</span>
+<span class="comments">// ver 1.4                                                           //</span>
+<span class="comments">//                               //</span>
+<span class="comments">// Platform:    Dell XPS 8900, Windows 10                            //</span>
+<span class="comments">// Application: Most Projects, CSE687 - Object Oriented Design       //</span>
+<span class="comments">// Author:      Narendra Katamaneni, Syracuse University,  //</span>
+<span class="comments">//																	 //</span>
+<span class="comments">///////////////////////////////////////////////////////////////////////</span>
+<span class="comments">/*
+* Package Operations:
+* -------------------
+* This package provides classes StringHelper and Converter and a global
+* function putline().  This class will be extended continuously for 
+* awhile to provide convenience functions for general C++ applications.
+*
+* Build Process:
+* --------------
+* Required Files: Utilities.h, Utilities.cpp
+*
+* Build Command: devenv Utilities.sln /rebuild debug
+*
+* Maintenance History:
+* --------------------
+* ver 1.4 : 26 Feb 2017
+* - changed StringHelper::split to use isspace from &lt;locale&gt; instead of &lt;cctype&gt;
+* ver 1.3 : 12 Aug 2016
+* - added overloads of title functions for std::ostringstreams
+* ver 1.2 : 10 Aug 2016
+* - added new function StringHelper::sTitle(...)
+* - changed the way string arguments are passed to each of the
+*   title functions
+* ver 1.1 : 06 Feb 2015
+* - fixed bug in split which turns a comma separated string into
+*   a vector of tokens.
+* - added comments
+* ver 1.0 : 05 Feb 2016
+* - first release
+*
+* Planned Additions and Changes:
+* ------------------------------
+* - none yet
+*/</span>
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;sstream&gt;
+#include &lt;functional&gt;
+
+namespace CoreUtilities
+{
+  class test
+  <span class="clsClass">{
+  public:
+    std::vector&lt;std::string&gt; publicVector;
+  };
+</span>
+  class StringHelper
+  <span class="clsClass">{
+  public:
+    static std::vector&lt;std::string&gt; split(const std::string& src);
+    static void Title(std::string src, std::ostream&  out = std::cout);
+    static void Title(std::string src, std::ostringstream& out);
+    static void title(std::string src, std::ostream& out = std::cout);
+    static void title(std::string src, std::ostringstream& out);
+    static void sTitle(
+      std::string src, size_t offset, size_t width, std::ostream& out = std::cout, char underline = '-'
+    );
+    static void sTitle(
+      std::string src, size_t offset, size_t width, std::ostringstream& out, char underline = '-'
+    );
+  };
+</span>
+  void putline();
+
+  template &lt;typename T&gt;
+  class Converter
+  <span class="clsClass">{
+  public:
+    static std::string toString(const T& t);
+    static T toValue(const std::string& src);
+  };
+</span>
+  template &lt;typename T&gt;
+  std::string Converter&lt;T&gt;::toString(const T& t)
+  <span class="funClass">{
+    std::ostringstream out;
+    out &lt;&lt; t;
+    return out.str();
+  }</span>
+
+  template&lt;typename T&gt;
+  T Converter&lt;T&gt;::toValue(const std::string& src)
+  <span class="funClass">{
+    std::istringstream in(src);
+    T t;
+    in &gt;&gt; t;
+    return t;
+  }</span>
+}
+#endif
+    </pre>
+  </body>
+</html>

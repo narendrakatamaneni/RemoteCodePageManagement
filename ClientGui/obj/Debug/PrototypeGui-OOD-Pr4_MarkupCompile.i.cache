@@ -1,20 +1,20 @@
 ﻿PrototypeGui-OOD-Pr4
 
 
-exe
+winexe
 C#
 .cs
-C:\Users\shkha\Desktop\Code-Publisher-Client-master\ClientGui\obj\Debug\
+C:\Users\NARENDRA\Desktop\Project4\RemoteCodePageManagement\ClientGui\obj\Debug\
 PrototypeGui_OOD_Pr4
 none
 false
 DEBUG;TRACE
-C:\Users\shkha\Desktop\Code-Publisher-Client-master\ClientGui\App.xaml
+C:\Users\NARENDRA\Desktop\Project4\RemoteCodePageManagement\ClientGui\App.xaml
 11151548125
 
-9-242595204
-15-1410343257
+92076997965
+151771231267
 MainWindow.xaml;
 
-True
+False
 

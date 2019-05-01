@@ -122,6 +122,12 @@
     <ProjectReference Include="..\FileSystem\FileSystemDemo.vcxproj">
       <Project>{ef4a3188-ca93-45a2-ab52-7548669e3aa8}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Logger\Logger.vcxproj">
+      <Project>{66d2c764-9da8-4505-b869-8e84e8968f7c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Process\Process.vcxproj">
+      <Project>{5e2548a1-c280-49e1-a2b6-55f4ba12b3f2}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Display.h" />

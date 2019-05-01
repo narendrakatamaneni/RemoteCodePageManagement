@@ -38,7 +38,7 @@
 #include <iostream>
 #include <regex>
 
-namespace Utilities
+namespace CodeUtilities
 {
   /////////////////////////////////////////////////////////////////////
   // preface function

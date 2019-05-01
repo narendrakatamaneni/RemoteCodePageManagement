@@ -16,11 +16,8 @@
 *
 *  Required Files:
 * -----------------
-*  ServerPrototype.h, ServerPrototype.cpp
-*  Comm.h, Comm.cpp, IComm.h
-*  Message.h, Message.cpp
-*  FileSystem.h, FileSystem.cpp
-*  Utilities.h
+*  Comm.h
+*  Message.h
 *
 *  Maintenance History:
 * ----------------------
@@ -49,7 +46,7 @@ namespace Repository
   using ServerProc = std::function<Msg(Msg)>;
   using MsgDispatcher = std::unordered_map<Key,ServerProc>;
   
-  const SearchPath storageRoot = "../clientFiles";  // root for all server file storage
+  const SearchPath storageRoot = "../Storage";  // root for all server file storage
   const MsgPassingCommunication::EndPoint serverEndPoint("localhost", 8080);  // listening endpoint
 
   class Server

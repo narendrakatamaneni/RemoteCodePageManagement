@@ -47,6 +47,7 @@ public:
   std::vector<std::string> convert();
   std::string convert(const std::string& filepath);
   std::vector<std::string> convert(const std::vector<std::string>& files);
+  std::vector<std::string> convertFile(std::vector<std::string> files);
   
   const std::vector<std::string> convertedFiles() const;
 
@@ -66,7 +67,7 @@ private:
 
 private:
   DependencyTable dt_;
-  std::string outputDir_ = "..\\..\\..\\ConvertedWebpages\\";
+  std::string outputDir_ = "../ConvertedWebpages/";
   std::vector<std::string> convertedFiles_;
   std::ofstream out_;
   static std::vector<std::string>& static_vector;

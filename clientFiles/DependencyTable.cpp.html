@@ -1,0 +1,194 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>DependencyTable.cpp</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="DependencyTable.h.html">DependencyTable.h</a><br/>
+      <a href="Logger.h.html">Logger.h</a><br/>
+    </h3>    <pre>
+<span class="comments">///////////////////////////////////////////////////////////////////////////</span>
+<span class="comments">// DependencyTable.cpp : defines DependencyTable.h functions             //</span>
+<span class="comments">// ver 1.0                                                               //</span>
+<span class="comments">// Author        :Narendra Katamaneni, Syracuse University               //</span>
+<span class="comments">///////////////////////////////////////////////////////////////////////////</span>
+
+<span class="comments">/*
+*  Package Operations:
+* =======================
+*  This package defines DependencyTable class which is used to hold files
+*  relationships after dependency analysis is performed. It is simply a
+*  wrapper around std::unordered_map which uses string key and vector
+*  value. Therefore, every file in the analysis will point to a vector
+*  of all the files it depends upon.
+*
+*
+*  Required Files:
+* =======================
+* DependencyTable.h ,Logger.h
+*
+*  Maintainence History:
+* =======================
+*  ver 1.0 - 11 Feb 2019
+*  - first release
+*/</span>
+
+#include "DependencyTable.h"
+#include "../Logger/Logger.h"
+#include &lt;sstream&gt;
+
+using namespace Logging;
+
+<span class="comments">// -----&lt; default ctor &gt;---------------------------------------------------</span>
+DependencyTable::DependencyTable()<span class="funClass">{
+  LoggerDebug::write("\n  Created instance of DependencyTable using default ctor\n");
+}</span>
+
+<span class="comments">// -----&lt; files initializer ctor &gt;-----------------------------------------</span>
+<span class="comments">/* sets the keys for the undordered map */
+DependencyTable::DependencyTable(const files & list)
+<span class="funClass">{
+  LoggerDebug::write("\n  Created instance of DependencyTable given files list\n");
+  table_.reserve(list.size()); <span class="comments">// improves performance </span>
+  for (auto file : list)
+    table_[file];
+}</span>
+
+<span class="comments">// -----&lt; dtor - used only for logging &gt;-----------------------------------</span>
+DependencyTable::~DependencyTable()<span class="funClass">{
+  LoggerDebug::write("\n  Destroying DependencyTable instance");
+}</span>
+
+<span class="comments">// -----&lt; has function - searches map for given key &gt;----------------------</span>
+bool DependencyTable::has(const std::string & file)
+<span class="funClass">{
+  return table_.find(file) != table_.end();
+}</span>
+
+<span class="comments">// -----&lt; add dependency function - adds filename to key's vector &gt;--------</span>
+void DependencyTable::addDependency(file filename, file dependency)
+<span class="funClass">{
+  LoggerDebug::write("\n  Adding dependency from " + filename + " to " + dependency);
+  <span class="comments">// this will create entry if key didnt exists in the map</span>
+  DependencyTable::dependencies & deps = table_[filename]; 
+  auto dep = std::find(deps.begin(), deps.end(), dependency);
+  if (dep == deps.end()) <span class="comments">// don't add depndency if it already exists</span>
+    deps.push_back(dependency);
+}</span>
+
+<span class="comments">// -----&lt; remove dependency function &gt;-------------------------------------</span>
+void DependencyTable::removeDependency(file filename, file dependency)
+<span class="funClass">{
+  LoggerDebug::write("\n  Removing dependency from " + filename + " to " + dependency);
+  DependencyTable::dependencies & deps = table_[filename];
+  auto dep = std::find(deps.begin(), deps.end(), dependency);
+  if (dep != deps.end())
+    deps.erase(dep);
+}</span>
+
+<span class="comments">// -----&lt; remove entry - removes key/value pair from map &gt;-----------------</span>
+void DependencyTable::removeEntry(file filename)
+<span class="funClass">{
+  LoggerDebug::write("\n  Removing entry [" + filename + "] from dependency table");
+  auto entry = table_.find(filename);
+  if (entry != table_.end())
+    table_.erase(entry);
+}</span>
+
+<span class="comments">// -----&lt; get key's dependencies &gt;-----------------------------------------</span>
+const DependencyTable::dependencies & DependencyTable::getDependencies(file filename) const
+<span class="funClass">{
+  return table_.at(filename);
+}</span>
+
+<span class="comments">// -----&lt; operator [] to provide easier access &gt;---------------------------</span>
+const DependencyTable::dependencies & DependencyTable::operator[](const file & filename) const
+<span class="funClass">{
+  return table_.at(filename);
+}</span>
+
+<span class="comments">// -----&lt; begin() iterator - allows for loop &gt;-----------------------------</span>
+DependencyTable::iterator DependencyTable::begin()
+<span class="funClass">{
+  return table_.begin();
+}</span>
+
+<span class="comments">// -----&lt; end() iterator - allows for loop &gt;-------------------------------</span>
+DependencyTable::iterator DependencyTable::end()
+<span class="funClass">{
+  return table_.end();
+}</span>
+
+<span class="comments">// -----&lt; get keys of map &gt;------------------------------------------------</span>
+DependencyTable::files DependencyTable::getFiles() const
+<span class="funClass">{
+  files list;
+  for (auto entry : table_)
+    list.push_back(entry.first);
+  return list;
+}</span>
+
+<span class="comments">// -----&lt; display entire table in formatted way &gt;--------------------------</span>
+void DependencyTable::display()
+<span class="funClass">{
+  std::ostringstream out; 
+  out &lt;&lt; "\n  Dependency table:";
+  for (auto entry : table_) {
+    out &lt;&lt; "\n  -- " &lt;&lt; entry.first;
+    for (auto dep : entry.second)
+      out &lt;&lt; "\n   -&gt; " &lt;&lt; dep;
+  }
+  LoggerDebug::write(out.str());
+  LoggerDemo::write(out.str());
+}</span>
+
+
+#ifdef TEST_DEBTABLE
+
+#include &lt;iostream&gt;
+
+<span class="comments">// ----&lt; test stub for dependency table package &gt;---------------------------</span>
+int main(int argc, char ** argv) <span class="funClass">{
+  LoggerDebug::attach(&std::cout);
+  LoggerDebug::start();
+
+  LoggerDebug::title("Testing DependencyTable Operations");
+
+  DependencyTable dt;
+  dt.addDependency("A.h", "B.h");
+  dt.addDependency("A.h", "C.h");
+  dt.addDependency("C.h", "B.h");
+  dt.addDependency("D.h", "B.h");
+  dt.addDependency("E.h", "A.h");
+  dt.addDependency("B.h", "E.h");
+  dt.addDependency("C.h", "E.h");
+  dt.addDependency("E.h", "E.h");
+  dt.removeDependency("E.h", "E.h");
+
+  dt.display();
+
+  LoggerDebug::stop();
+
+  return 0;
+
+}</span>
+
+#endif
+    </pre>
+  </body>
+</html>

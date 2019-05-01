@@ -51,7 +51,7 @@ void Receiver::stop()
 
 Message Receiver::getMessage()
 {
-  StaticLogger<1>::write("\n  -- " + rcvrName + " deQing message");
+  std::cout<<"\n  -- " + rcvrName + " deQing message";
   return rcvQ.deQ();
 }
 //----< constructor initializes endpoint object >--------------------
@@ -110,7 +110,7 @@ void Sender::start()
       }
       else
       {
-        bool sendRslt = connecter.send(msgStr.length(), (Socket::byte*)msgStr.c_str());
+		  bool sendRslt = connecter.send(msgStr.length(), (Socket::byte*)msgStr.c_str());
       }
     }
   };

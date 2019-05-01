@@ -36,7 +36,7 @@
 #include <exception>
 #include "IPublisher.h"
 
-using namespace Utilities;
+using namespace CodeUtilities;
 using namespace Logging; 
 using namespace FileSystem;
 
@@ -129,7 +129,7 @@ void Publisher::publish(const std::vector<std::string>& files)
 }
 
 // -----< gets display mode as set by PCL >---------------------------------
-Utilities::DisplayMode Publisher::displayMode() const
+CodeUtilities::DisplayMode Publisher::displayMode() const
 {
   return pcl_->displayMode();
 }
@@ -173,9 +173,9 @@ void stopLoggers() {
   LoggerDebug::stop();
 }
 
-IPublisher* ObjectFactory::createClient() {
+/*IPublisher* ObjectFactory::createClient() {
 	return new Publisher;
-}
+}*/
 
 //#ifdef DEMO_CP
 
@@ -201,10 +201,10 @@ int demoReq5(Publisher& cp, int argc, char ** argv) {
 }
 
 // -----< demonstrate requirements 6,7 and 8 >------------------------------
-void demoReq678(Publisher& cp) {
+std::vector<std::string> demoReq678(Publisher& cp) {
   LoggerDemo::write("\n");
   LoggerDemo::title("Demonstrating Requirements #6, #7 & #8 - Convert , Dependencies and Display");
-  cp.CollectConvertedFiles();
+  return cp.CollectConvertedFiles();
 
 }
 
@@ -218,16 +218,16 @@ void demoReq9() {
 
 }
 
-int Publisher::SetCmd(int argc,char** argv) {
-	try {
-		std::cout << "Inside publisher project.." << std::endl;
+std::vector<std::string> Publisher::SetCmd(int argc,char** argv) {
+	std::vector<std::string>files;
 
-		initializeLoggers(Utilities::DisplayMode::Debug); // by default go debug
+	try {		
+		initializeLoggers(CodeUtilities::DisplayMode::Debug); // by default go debug
 		for (int i = 0; i < argc; i++) {
 			std::string arg = argv[i];
 			//if (arg == "/demo") { // only go demo once told 
 				stopLoggers();
-				initializeLoggers(Utilities::DisplayMode::Demo);
+				initializeLoggers(CodeUtilities::DisplayMode::Demo);
 				break;
 			//}
 		}
@@ -237,7 +237,7 @@ int Publisher::SetCmd(int argc,char** argv) {
 		Publisher cp;
 
 		int err = demoReq5(cp, argc, argv);
-		if (err == 2) return 2;
+		//if (err == 2) return 2;
 		/*if (err == 1) {
 			LoggerDemo::write("\n  Invalid command line args.\n  Ending demonstration...\n");
 			return 1;
@@ -247,25 +247,36 @@ int Publisher::SetCmd(int argc,char** argv) {
 			LoggerDemo::write("\n  Ending demonstration...\n");
 			return 2;
 		}*/
-		demoReq678(cp);
+		files= demoReq678(cp);
 		demoReq9();
 		stopLoggers();
 	}
 	catch (std::exception& e) {
 		std::cout << "Oops an Exception occured :  " << e.what() << '\n';
 	}
-	return 1;
+	return files;
 }
 
 std::vector<std::string> Publisher::GetConvertFiles() {
 	return convertedfiles_;
 }
 
-void Publisher::CollectConvertedFiles() {
+std::vector<std::string> Publisher::CollectConvertedFiles() {
 
 	convertedfiles_ = cconv_.convert(files_);
-
+	return convertedfiles_;
 }
+
+bool Publisher::convertFiles(std::string file) {
+	std::vector<std::string> files;
+	files.push_back(file);
+	std::vector<std::string> convertedFiles = cconv_.convertFile(files);
+	if (convertedFiles.size()<=0) {
+		return false;
+	}
+	return true;
+}
+
 
 //#endif
 

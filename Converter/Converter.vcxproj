@@ -131,8 +131,17 @@
     <ProjectReference Include="..\Dependencies\Dependencies.vcxproj">
       <Project>{ce979d4e-0b05-4cf2-8262-aac3a7a27706}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Display\Display.vcxproj">
+      <Project>{6f6ad734-bf69-4a03-a57a-a2ba8717990d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\FileSystem\FileSystemDemo.vcxproj">
       <Project>{ef4a3188-ca93-45a2-ab52-7548669e3aa8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Logger\Logger.vcxproj">
+      <Project>{66d2c764-9da8-4505-b869-8e84e8968f7c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Parser\Parser.vcxproj">
+      <Project>{77be9964-7862-4d05-aff0-b42718aae386}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

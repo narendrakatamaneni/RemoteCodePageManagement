@@ -47,7 +47,7 @@
       </Grid.RowDefinitions>
       <TextBlock Grid.Row="0" Padding="10 10" FontWeight="Bold" FontSize="14">Files</TextBlock>
       <Border Grid.Row="1" BorderThickness="10" Background="#000">
-        <ListBox x:Name="FileList"></ListBox>
+        <ListBox x:Name="FileList" MouseDoubleClick="FileList_MouseDoubleClick" ></ListBox>
       </Border>
     </Grid>
   </Grid>

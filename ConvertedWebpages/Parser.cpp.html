@@ -1,0 +1,207 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Parser.cpp</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="Utilities.h.html">Utilities.h</a><br/>
+      <a href="Toker.h.html">Toker.h</a><br/>
+      <a href="Semi.h.html">Semi.h</a><br/>
+      <a href="Parser.h.html">Parser.h</a><br/>
+      <a href="ActionsAndRules.h.html">ActionsAndRules.h</a><br/>
+      <a href="ConfigureParser.h.html">ConfigureParser.h</a><br/>
+      <a href="FileSystem.h.html">FileSystem.h</a><br/>
+    </h3>    <pre>
+<span class="comments">/////////////////////////////////////////////////////////////////////</span>
+<span class="comments">//  Parser.cpp - Analyzes C++ and C# language constructs           //</span>
+<span class="comments">//  ver 1.0                                                        //</span>
+<span class="comments">//  Author:        Narendra Katamaneni,  Syracuse University       //</span>
+<span class="comments">/////////////////////////////////////////////////////////////////////</span>
+
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include "../Utilities/Utilities.h"
+#include "../Tokenizer/Toker.h"
+#include "../SemiExpression/Semi.h"
+#include "Parser.h"
+#include "ActionsAndRules.h"
+#include "ConfigureParser.h"
+
+<span class="comments">//using namespace CodeAnalysis;</span>
+using namespace Lexer;
+using namespace Utilities;
+using Demo = Logging::StaticLogger&lt;1&gt;;
+
+namespace CodeAnalysis {
+
+  <span class="comments">//----&lt; register parsing rule &gt;--------------------------------</span>
+
+  void Parser::addRule(IRule* pRule)
+  <span class="funClass">{
+    rules.push_back(pRule);
+  }</span>
+  <span class="comments">//----&lt; get next ITokenCollection &gt;------------------------------</span>
+
+  bool Parser::next()
+  <span class="funClass">{
+    bool succeeded = pTokColl-&gt;get();
+    if (!succeeded)
+    {
+      return false;
+    }
+
+    pTokColl-&gt;trim();
+
+    return true;
+  }</span>
+
+  <span class="comments">//----&lt; parse the Semi by applying all rules to it &gt;--------</span>
+
+  bool Parser::parse()
+  <span class="funClass">{
+    for (size_t i = 0; i &lt; rules.size(); ++i)
+    {
+      bool doWhat = rules[i]-&gt;doTest(pTokColl);
+      if (doWhat == IRule::Stop)
+        break;
+    }
+    return true;
+  }</span>
+  <span class="comments">//----&lt; register action with a rule &gt;--------------------------</span>
+
+  void IRule::addAction(IAction *pAction)
+  <span class="funClass">{
+    actions.push_back(pAction);
+  }</span>
+  <span class="comments">//----&lt; invoke all actions associated with a rule &gt;------------</span>
+
+  void IRule::doActions(const Lexer::ITokenCollection* pTokColl)
+  <span class="funClass">{
+    if (actions.size() &gt; 0)
+      for (size_t i = 0; i &lt; actions.size(); ++i)
+        actions[i]-&gt;doAction(pTokColl);
+  }</span>
+
+  <span class="comments">//----&lt; test stub &gt;--------------------------------------------</span>
+}
+
+#ifdef TEST_PARSER
+
+#include "../FileSystem/FileSystem.h"
+#include &lt;queue&gt;
+#include &lt;string&gt;
+#define Util StringHelper
+
+using namespace CodeAnalysis;
+
+int main(int argc, char* argv[])
+<span class="funClass">{
+  Util::Title("Testing Parser Class");
+  putline();
+
+  <span class="comments">// Analyzing files, named on the command line</span>
+
+  if(argc &lt; 2)
+  {
+    std::cout 
+      &lt;&lt; "\n  please enter name of file to process on command line\n\n";
+    return 1;
+  }
+
+  std::string fileSpec;
+
+  for(int i=1; i&lt;argc; ++i)  <span class="comments">// iterate over files</span>
+  {
+    fileSpec = FileSystem::Path::getFullFileSpec(argv[i]);
+    std::string msg = "Processing file" + fileSpec;
+    Util::title(msg);
+
+
+	<span class="comments">// configure the parser everytime you want to use parser</span>
+    ConfigParseForCodeAnal configure;
+    Parser* pParser = configure.Build();
+
+    std::string name;
+
+    try
+    {
+		<span class="comments">//if parser is valid or not</span>
+      if(pParser)
+      {
+        name = FileSystem::Path::getName(argv[i]);
+        if(!configure.Attach(fileSpec))
+        {
+          std::cout &lt;&lt; "\n  could not open file " &lt;&lt; name &lt;&lt; std::endl;
+          continue;
+        }
+      }
+      else
+      {
+        std::cout &lt;&lt; "\n\n  Parser not built\n\n";
+        return 1;
+      }
+
+      <span class="comments">// save current package name</span>
+
+      Repository* pRepo = Repository::getInstance();
+      pRepo-&gt;package() = name;
+
+      <span class="comments">// parse the package</span>
+
+      while (pParser-&gt;next())
+      {
+        pParser-&gt;parse();
+      }
+      std::cout &lt;&lt; "\n";
+
+      <span class="comments">// final AST operations</span>
+      ASTNode* pGlobalScope = pRepo-&gt;getGlobalScope();
+
+	  <span class="comments">//Remove the below code</span>
+	  auto iter2 = pGlobalScope-&gt;statements_.begin();
+	  while (iter2 != pGlobalScope-&gt;statements_.end()) {
+		  std::cout &lt;&lt; "\n " &lt;&lt; std::string(2 * 4, ' ') &lt;&lt; (*iter2)-&gt;ToString();
+		  ++iter2;
+	  }
+
+
+      <span class="comments">// walk AST, computing complexity for each node</span>
+      <span class="comments">// and record in AST node's element</span>
+
+      complexityEval(pGlobalScope);
+      
+      <span class="comments">// Walk AST, displaying each element, indented</span>
+      <span class="comments">// by generation</span>
+
+      TreeWalk(pGlobalScope);
+    }
+    catch(std::exception& ex)
+    {
+      std::cout &lt;&lt; "\n\n    " &lt;&lt; ex.what() &lt;&lt; "\n\n";
+      std::cout &lt;&lt; "\n  exception caught at line " &lt;&lt; __LINE__ &lt;&lt; " ";
+      std::cout &lt;&lt; "\n  in package \"" &lt;&lt; name &lt;&lt; "\"";
+    }
+    std::cout &lt;&lt; "\n";
+  }
+  std::cout &lt;&lt; "\n";
+}</span>
+
+#endif
+    </pre>
+  </body>
+</html>

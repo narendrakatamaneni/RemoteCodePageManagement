@@ -51,7 +51,7 @@ namespace WpfApp1
 {
   public partial class MainWindow : Window
   {
-    string workingdirectory = "../../../../Project4HelpWPF (2)";
+    string workingdirectory = "../../../../RemoteCodePageManagement";
     public MainWindow()
     {
       InitializeComponent();
@@ -194,7 +194,7 @@ namespace WpfApp1
       
       translater = new Translater();
       translater.listen(endPoint_,workingdirectory, workingdirectory);
-            
+
 
       // start processing messages
       processMessages();
@@ -205,7 +205,8 @@ namespace WpfApp1
       CsEndPoint serverEndPoint = new CsEndPoint();
       serverEndPoint.machineAddress = "localhost";
       serverEndPoint.port = 8080;
-      PathTextBlock.Text = "clientFiles";
+      PathTextBlock.Text = "RemoteCodePageManagement";
+      //pass the below one through run.bat
       pathStack_.Push("../../RemoteCodePageManagement");
       CsMessage msg = new CsMessage();
       msg.add("to", CsEndPoint.toString(serverEndPoint));
@@ -311,14 +312,39 @@ namespace WpfApp1
                 //msg.remove("command");
                 //msg.add("command", "getFile");
                 //translater.postMessage(msg);
+
             }
                catch (Exception)
             {
                 Console.WriteLine("Exception occured : you have clicked on the blank space");
             }
     }
-    //----< first test not completed >---------------------------------
 
-  
-  }
+        private void FileList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                string selectedFile = (string)FileList.SelectedItem;
+                CsEndPoint serverEndPoint = new CsEndPoint();
+                serverEndPoint.machineAddress = "localhost";
+                serverEndPoint.port = 8080;
+                CsMessage msg = new CsMessage();
+                msg.add("to", CsEndPoint.toString(serverEndPoint));
+                msg.add("from", CsEndPoint.toString(endPoint_));
+                msg.add("command", "convert");
+                msg.add("filename", selectedFile);
+                msg.add("filepath", PathTextBlock.Text);
+                //msg.add("path", pathStack_.Peek());
+                translater.postMessage(msg);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Exception occured while mouse double click on FileList");
+            }
+        }
+        //----< first test not completed >---------------------------------
+
+
+    }
 }

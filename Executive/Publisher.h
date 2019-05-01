@@ -37,7 +37,7 @@
 #include "../CodeUtilities/CodeUtilities.h"
 #include "IPublisher.h"
 
-class Publisher :public IPublisher
+class Publisher 
 {
 public:
 	Publisher();
@@ -55,14 +55,15 @@ public:
   void publish(const std::string& file);
   void publish(const std::vector<std::string>& files);
 
-  Utilities::DisplayMode displayMode() const;
-  virtual int SetCmd(int argc,char** argv) override;
-  virtual std::vector<std::string> GetConvertFiles() override;
-  virtual void CollectConvertedFiles() ;
+  CodeUtilities::DisplayMode displayMode() const;
+  virtual std::vector<std::string> SetCmd(int argc, char** argv);
+  virtual std::vector<std::string> GetConvertFiles();
+  virtual std::vector<std::string> CollectConvertedFiles() ;
+  virtual bool convertFiles(std::string file);
   
    
 private:
-  Utilities::ProcessCmdLine *pcl_;
+  CodeUtilities::ProcessCmdLine *pcl_;
   CodeConverter cconv_;
   Display display_;
 
