@@ -152,6 +152,9 @@
     <ClCompile Include="GrammarHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SemiExpression\SemiExpression.vcxproj">
+      <Project>{e7758ff7-9321-4a16-84ed-59743ab374cd}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.vcxproj">
       <Project>{462b43b2-8b13-4178-bf2a-903f76f1985c}</Project>
     </ProjectReference>

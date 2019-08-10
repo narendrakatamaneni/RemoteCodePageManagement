@@ -2,7 +2,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // IPublisher.h  : defines an interface to a worker C++ class              //
 // ver 1.0                                                                 //
-// Author  : Narendra Katamaneni, CSE687, Syracuse University			   //
+// Author  : Jim Fawcett, CSE687, Syracuse University			   //
 /////////////////////////////////////////////////////////////////////////////
 /*
 *  Package Description:

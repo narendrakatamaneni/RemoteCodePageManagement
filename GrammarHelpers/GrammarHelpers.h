@@ -3,10 +3,8 @@
 /////////////////////////////////////////////////////////////////////////
 // GrammarHelpers.h - Functions providing base grammatical analyses    //
 // ver 1.4                                                             //
-//                                 //
 // Application: Support for Parsing, CSE687 - Object Oriented Design   //
-// Author:      Narendra Katamaneni, Syracuse University,            //
-//                                                //
+// Author:      Jim Fawcett, Syracuse University,                      //
 /////////////////////////////////////////////////////////////////////////
 /*
 * Package Operations:

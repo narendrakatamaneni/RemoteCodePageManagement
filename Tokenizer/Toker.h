@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////
 // Toker.h - Collects words from a stream                          //
 // ver 1.0                                                         //
-// Narendra Katamaneni, Syracuse University						   //
+// Jim Fawcett, Syracuse University						   //
 /////////////////////////////////////////////////////////////////////
 /*
  * Package Operations:

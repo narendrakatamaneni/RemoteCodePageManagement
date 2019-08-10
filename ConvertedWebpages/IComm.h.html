@@ -1,0 +1,48 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>IComm.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <pre>
+#pragma once
+<span class="comments">/////////////////////////////////////////////////////////////////////</span>
+<span class="comments">// IComm.h - interface for message-passing communication facility  //</span>
+<span class="comments">// ver 1.0                                                         //</span>
+<span class="comments">// Jim Fawcett, CSE687-OnLine Object Oriented Design, Fall 2017    //</span>
+<span class="comments">/////////////////////////////////////////////////////////////////////</span>
+
+#include &lt;string&gt;
+#include "../Message/Message.h"
+
+namespace MsgPassingCommunication
+{
+  class IComm
+  <span class="clsClass">{
+  public:
+    static IComm* create(const std::string& machineAddress, size_t port);
+    virtual void start() = 0;
+    virtual void stop() = 0;
+    virtual void postMessage(Message msg) = 0;
+    virtual Message getMessage() = 0;
+    virtual std::string name() = 0;
+    virtual ~IComm() {}</span>
+  };
+}</span>
+    </pre>
+  </body>
+</html>

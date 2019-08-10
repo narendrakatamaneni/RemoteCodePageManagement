@@ -1,8 +1,35 @@
 /////////////////////////////////////////////////////////////////////
 // Toker.cpp - Collects words from a stream                        //
 // ver 1.0                                                         //
-// Narendra Katamaneni, CSE687 - Object Oriented Design, Spring 2019       //
+// Jim Fawcett, CSE687 - Object Oriented Design, Spring 2019       //
 /////////////////////////////////////////////////////////////////////
+
+/*
+* Package Operations :
+*------------------ -
+*This tokenizer is implemented with the State Pattern, and :
+	*-Collects words, called tokens, from a stream.
+	* -Discards all whitespace except for newlines which are returned as
+	*   single character tokens.
+	* -By default, collects and discards all comments, but has an option
+	*   to return each comment as a single token.
+	* -Also returns quoted strings and quoted characters as tokens.
+	*   Toker correctly handles the C# string @"...".
+	* -This package demonstrates how to build a tokenizer based on the
+	*   State Pattern.
+	*
+	* Required Files :
+*-------------- -
+*Toker.h
+*
+* Maintenance History
+* ------------------ -
+*ver 1.1 : 27 Feb 2019
+* -fixed bugs in toker by checking for end - of - file in getTok() function
+*   in SingleLineCommentState and MultiLineCommentState
+* ver 1.0 : 09 Feb 2019
+* -first release - port of C# design
+*/
 
 #include <iostream>
 #include <iomanip>

@@ -1,7 +1,7 @@
 ﻿/////////////////////////////////////////////////////////////////////
 // MainWindow.xaml.cs - Code Publisher Client                      //
 // ver 1.2                                                         //
-// Narendra Katamaneni, CSE687 - Object Oriented Design            //
+// Narendra Katamaneni CSE687 - Object Oriented Design            //
 /////////////////////////////////////////////////////////////////////
 /*
  * Package Operations:
@@ -15,6 +15,7 @@
  * ---------------
  * MainWindow.xaml, MainWindow.xaml.cs
  * SelectionWindow.xaml, SelectionWindow.xaml.cs
+ * Translater.h
  * 
  * Maintenance History:
  * -------------------
@@ -42,6 +43,7 @@ using MsgPassingCommunication;
 using System.Threading;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace ClientGui
 {
@@ -73,20 +75,28 @@ namespace ClientGui
 
         private void processMessages()
         {
-            ThreadStart thrdProc = () => {
-                while (true)
+            try
+            {
+                ThreadStart thrdProc = () =>
                 {
-                    CsMessage msg = translater.getMessage();
-                    if (msg.attributes.Count == 0)
-                        continue;
-                    string msgId = msg.value("command");
-                    if (dispatcher_.ContainsKey(msgId))
-                        dispatcher_[msgId].Invoke(msg);
-                }
-            };
-            rcvThrd = new Thread(thrdProc);
-            rcvThrd.IsBackground = true;
-            rcvThrd.Start();
+                    while (true)
+                    {
+                        CsMessage msg = translater.getMessage();
+                        if (msg.attributes.Count == 0)
+                            continue;
+                        string msgId = msg.value("command");
+                        if (dispatcher_.ContainsKey(msgId))
+                            dispatcher_[msgId].Invoke(msg);
+                    }
+                };
+                rcvThrd = new Thread(thrdProc);
+                rcvThrd.IsBackground = true;
+                rcvThrd.Start();
+            }
+            catch (Exception)
+            {
+
+            }
         }
         //----< function dispatched by child thread to main thread >-------
 
@@ -132,38 +142,46 @@ namespace ClientGui
 
         private void DispatcherLoadGetDirs()
         {
-            Action<CsMessage> getDirs = (CsMessage rcvMsg) =>
+            try
             {
-                Action clrDirs = () =>
+                Action<CsMessage> getDirs = (CsMessage rcvMsg) =>
                 {
-                    clearDirs();
-                };
-                Dispatcher.Invoke(clrDirs, new Object[] { });
-                var enumer = rcvMsg.attributes.GetEnumerator();
-                while (enumer.MoveNext())
-                {
-                    string key = enumer.Current.Key;
-                    if (key.Contains("dir"))
+                    Action clrDirs = () =>
                     {
-                        Action<string> doDir = (string dir) =>
+                        clearDirs();
+                    };
+                    Dispatcher.Invoke(clrDirs, new Object[] { });
+                    var enumer = rcvMsg.attributes.GetEnumerator();
+                    while (enumer.MoveNext())
+                    {
+                        string key = enumer.Current.Key;
+                        if (key.Contains("dir"))
                         {
-                            addDir(dir);
-                        };
-                        Dispatcher.Invoke(doDir, new Object[] { enumer.Current.Value });
+                            Action<string> doDir = (string dir) =>
+                            {
+                                addDir(dir);
+                            };
+                            Dispatcher.Invoke(doDir, new Object[] { enumer.Current.Value });
+                        }
                     }
-                }
-                Action insertUp = () =>
-                {
-                    insertParent();
+                    Action insertUp = () =>
+                    {
+                        insertParent();
+                    };
+                    Dispatcher.Invoke(insertUp, new Object[] { });
                 };
-                Dispatcher.Invoke(insertUp, new Object[] { });
-            };
-            addClientProc("getDirs", getDirs);
+                addClientProc("getDirs", getDirs);
+            }
+            catch (Exception)
+            {
+
+            }
         }
         //----< load getFiles processing into dispatcher dictionary >------
 
         private void DispatcherLoadGetFiles()
         {
+            try { 
             Action<CsMessage> getFiles = (CsMessage rcvMsg) =>
             {
                 Action clrFiles = () =>
@@ -186,54 +204,76 @@ namespace ClientGui
                 }
             };
             addClientProc("getFiles", getFiles);
+            }
+            catch (Exception)
+            {
+
+            }
+
         }
 
         private void DispatcherLoadConvert()
         {
-            Action<CsMessage> convert = (CsMessage rcvMsg) =>
+            try
             {
-                Action clrFiles = () =>
+                Action<CsMessage> convert = (CsMessage rcvMsg) =>
                 {
-                    clearFiles();
-                };
-                Dispatcher.Invoke(clrFiles, new Object[] { });
-                var enumer = rcvMsg.attributes.GetEnumerator();
-                while (enumer.MoveNext())
-                {
-                    string key = enumer.Current.Key;
-                    if (key.Contains("file"))
+                    Action clrFiles = () =>
                     {
-                        Action<string> doFile = (string file) =>
+                        clearFiles();
+                    };
+                    Dispatcher.Invoke(clrFiles, new Object[] { });
+                    var enumer = rcvMsg.attributes.GetEnumerator();
+                    while (enumer.MoveNext())
+                    {
+                        string key = enumer.Current.Key;
+                        if (key.Contains("file"))
                         {
-                            addConvertedFile(file);
-                        };
-                        Dispatcher.Invoke(doFile, new Object[] { enumer.Current.Value });
+                            Action<string> doFile = (string file) =>
+                            {
+                                addConvertedFile(file);
+                            };
+                            Dispatcher.Invoke(doFile, new Object[] { enumer.Current.Value });
+                        }
                     }
-                }
-            };
-            addClientProc("convert", convert);
+                };
+                addClientProc("convert", convert);
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         private void DispatcherBrowse()
         {
-            Action<CsMessage> browse = (CsMessage rcvMsg) =>
+            int count = 0;
+            try
             {
-                var enumer = rcvMsg.attributes.GetEnumerator();
-                while (enumer.MoveNext())
+                Action<CsMessage> browse = (CsMessage rcvMsg) =>
                 {
-                    string key = enumer.Current.Key;
-                    if (key.Contains("browse"))
+                    var enumer = rcvMsg.attributes.GetEnumerator();
+                    while (enumer.MoveNext())
                     {
-                        Action<string> doFile = (string file) =>
+                        string key = enumer.Current.Key;
+                        if (key.Contains("browse")&&count<1)
                         {
-                            String path = Path.GetFullPath(workingdirectory.ToString()) + "\\" + file;
-                            System.Diagnostics.Process.Start(path);
-                        };
-                        Dispatcher.Invoke(doFile, new Object[] { enumer.Current.Value });
+                            Action<string> doFile = (string file) =>
+                            {
+                                String path = Path.GetFullPath(workingdirectory.ToString()) + "\\" + file;
+                                System.Diagnostics.Process.Start(path);
+                                ++count;
+                            };
+                            Dispatcher.Invoke(doFile, new Object[] { enumer.Current.Value });
+                        }
                     }
-                }
-            };
-            addClientProc("file", browse);
+                };
+                addClientProc("file", browse);
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         //----< load all dispatcher processing >---------------------------
@@ -253,84 +293,45 @@ namespace ClientGui
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string[] args = Environment.GetCommandLineArgs();
-            endPointPort = int.Parse(args[1]);
-            serverPort= int.Parse(args[2]);
-            // start Comm
-            endPoint_ = new CsEndPoint();
-            endPoint_.machineAddress = "localhost";
-            endPoint_.port = endPointPort;
-            translater = new Translater();
-            translater.listen(endPoint_, workingdirectory, workingdirectory);
-            // start processing messages
-            processMessages();
-            // load dispatcher
-            loadDispatcher();
-
-
-            CsEndPoint serverEndPoint = new CsEndPoint();
-            serverEndPoint.machineAddress = "localhost";
-            serverEndPoint.port = serverPort;
-            txtPath.Text = "RemoteCodePageManagement";
-            txtPatterns.Text = "*.h *.cpp";
-            txtRegex.Text = "[A-B](.*)";
-            //pass the below one through run.bat
-            pathStack_.Push("../../RemoteCodePageManagement");
-            CsMessage msg = new CsMessage();
-            msg.add("to", CsEndPoint.toString(serverEndPoint));
-            msg.add("from", CsEndPoint.toString(endPoint_));
-            msg.add("command", "getDirs");
-            msg.add("path", pathStack_.Peek());
-            translater.postMessage(msg);
-            /*msg.remove("command");
-            msg.add("command", "getFiles");
-            translater.postMessage(msg);
-
-            /*CsMessage msgF = new CsMessage();
-            msgF.add("to", CsEndPoint.toString(serverEndPoint));
-            msgF.add("from", CsEndPoint.toString(endPoint_));
-            msgF.add("command", "getFile");
-            msgF.add("path", "CommLibWrapper.h");
-
-            translater.postMessage(msgF);
-            msgF.attributes["path"] = "CommLibWrapper.cpp";
-            translater.postMessage(msgF);*/
-
-
-            /*string[] args = Environment.GetCommandLineArgs();
-            foreach (string arg in args)
+            try
             {
-                if (arg == "/demo")
-                {
-                    startDemonstration();
+                testStub();
 
-                }
-            }*/
-            //CsMessage msgF = new CsMessage();
-            //msgF.add("to", CsEndPoint.toString(serverEndPoint));
-            //msgF.add("from", CsEndPoint.toString(endPoint_));
-            //msgF.add("command", "getFile");
-            //msgF.add("path", "CommLibWrapper.h");
-            //translater.postMessage(msgF);
-            //msgF.attributes["Path"] = "CommLibWrapper.cpp";
-            //translater.postMessage(msgF);
+                /*string[] args = Environment.GetCommandLineArgs();
+                endPointPort = int.Parse(args[1]);
+                serverPort = int.Parse(args[2]);
+                // start Comm
+                endPoint_ = new CsEndPoint();
+                endPoint_.machineAddress = "localhost";
+                endPoint_.port = endPointPort;
+                translater = new Translater();
+                translater.listen(endPoint_, workingdirectory, workingdirectory);
+                // start processing messages
+                processMessages();
+                // load dispatcher
+                loadDispatcher();
+
+                CsEndPoint serverEndPoint = new CsEndPoint();
+                serverEndPoint.machineAddress = "localhost";
+                serverEndPoint.port = serverPort;
+                txtPath.Text = "RemoteCodePageManagement";
+                txtPatterns.Text = "*.h *.cpp";
+                txtRegex.Text = "[A-D](.*)";
+                //pass the below one through run.bat
+                pathStack_.Push("../../RemoteCodePageManagement");
+                CsMessage msg = new CsMessage();
+                msg.add("to", CsEndPoint.toString(serverEndPoint));
+                msg.add("from", CsEndPoint.toString(endPoint_));
+                msg.add("command", "getDirs");
+                msg.add("path", pathStack_.Peek());
+                translater.postMessage(msg);*/
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Exception occured while loading main window");
+            }
 
         }
-
-       /* void LoadNavTab(string path)
-        {
-            lstFiles.Items.Clear();
-            //CurrPath.Text = path;
-            string[] dirs = Directory.GetDirectories(path);
-            lstFiles.Items.Add("..");
-            foreach (string dir in dirs)
-            {
-                DirectoryInfo di = new DirectoryInfo(dir);
-                string name = System.IO.Path.GetDirectoryName(dir);
-                lstFiles.Items.Add(di.Name);
-            }
-          
-        }*/
         private void BtnPublish_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -359,34 +360,21 @@ namespace ClientGui
             }
         }
 
-
-        /* private void btnPath_TextChanged(object sender, RoutedEventArgs e)
-         {
-
-             lstFiles.Items.Clear();
-             lstFiles.Items.Add("..");
-             var dirs = Directory.GetDirectories(WDirectory);
-             foreach (var dir in dirs)
-             {
-                 string dirName
-                 lstFiles.Items.Add(Path.GetFileName(dir));
-             }
-             List<string> filesMatchingPatterns = new List<string>();
-             var patterns = Patterns.split(' ');
-             foreach (var patt in patterns)
-                 filesMatchingPatterns.AddRange(Directory.GetFiles(WDirectory, patt));
-             else{
-                 foreach (var file in filesMatchingPatterns) lstFiles.Items.Add(Path.GetFileName(file));
-             }
-
-         }*/
         //----< strip off name of first part of path >---------------------
 
         private string removeFirstDir(string path)
         {
             string modifiedPath = path;
-            int pos = path.IndexOf("/");
-            modifiedPath = path.Substring(pos + 1, path.Length - pos - 1);
+            try
+            {             
+               int pos = path.IndexOf("/");
+               modifiedPath = path.Substring(pos + 1, path.Length - pos - 1);
+               
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Exception occured while removing directory");
+            }
             return modifiedPath;
         }
 
@@ -436,23 +424,15 @@ namespace ClientGui
             }
         }
 
-      
-        private void TxtPatterns_KeyUp(object sender, KeyEventArgs e)
-        {
-
-        }
-
         private void CvtdFiles_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
 
             try
             {
-                // build path for selected dir
                 string selectedFile = (string)cvtdFiles.SelectedItem;
                 if (selectedFile == null)
                     return;
                 selectedFile=Path.GetFileName(selectedFile);
-                // build message to get dirs and post it
                 CsEndPoint serverEndPoint = new CsEndPoint();
                 serverEndPoint.machineAddress = "localhost";
                 serverEndPoint.port = serverPort;
@@ -468,44 +448,60 @@ namespace ClientGui
             {
                 Console.WriteLine("Exception occured : you have clicked on the blank space");
             }
-
-            /*String str = cvtdFiles.SelectedItem.ToString();
-            System.Diagnostics.Process.Start(str);*/
         }
 
-        /*public bool test()
+        private void testStub()
         {
-            String[] commandLineArguments = Environment.GetCommandLineArgs();
-            if (commandLineArguments.Length > 2)
-            {
-                string path = commandLineArguments[1];
-                if (!Directory.Exists(path)) return false;
-                WDirectory = Path.GetFullPath(path);
-                txtPath.Text = WDirectory;
 
-                for (int i = 2; i < commandLineArguments.Length; i++)
-                {
-                    string arg = commandLineArguments[i];
-                    try
-                    {
-                        Regex r = new Regex(arg);
-                        if (arg.Contains('['))
-                            txtRegex.Text = arg;
-                    }
-                    catch (Exception)
-                    {
-                        txtPatterns.Text += " " + arg;
-                    }
-                }
-                //BtnPublish_Click(this, new RoutedEventArgs());
-            }
-            else
+            string[] args = Environment.GetCommandLineArgs();
+            endPointPort = int.Parse(args[1]);
+            serverPort = int.Parse(args[2]);
+            // start Comm
+            endPoint_ = new CsEndPoint();
+            endPoint_.machineAddress = "localhost";
+            endPoint_.port = endPointPort;
+            translater = new Translater();
+            translater.listen(endPoint_, workingdirectory, workingdirectory);
+            // start processing messages
+            processMessages();
+            // load dispatcher
+            loadDispatcher();
+
+            CsEndPoint serverEndPoint1 = new CsEndPoint();
+            serverEndPoint1.machineAddress = "localhost";
+            serverEndPoint1.port = serverPort;
+            txtPath.Text = "RemoteCodePageManagement";
+            txtPatterns.Text = "*.h *.cpp";
+            txtRegex.Text = "[A-B](.*)";
+            //pass the below one through run.bat
+            pathStack_.Push("../../RemoteCodePageManagement");
+            CsMessage msg1 = new CsMessage();
+            msg1.add("to", CsEndPoint.toString(serverEndPoint1));
+            msg1.add("from", CsEndPoint.toString(endPoint_));
+            msg1.add("command", "getDirs");
+            msg1.add("path", pathStack_.Peek());
+            translater.postMessage(msg1);
+
+            CsEndPoint serverEndPoint2 = new CsEndPoint();
+            serverEndPoint2.machineAddress = "localhost";
+            serverEndPoint2.port = serverPort;
+            CsMessage msg2 = new CsMessage();
+            msg2.add("to", CsEndPoint.toString(serverEndPoint2));
+            msg2.add("from", CsEndPoint.toString(endPoint_));
+            msg2.add("command", "convert");
+            //msg2.add("path", txtPath.Text);
+            msg2.add("path", "../RemoteCodePageManagement");
+            msg2.add("appName", "Project4HelpWPF.exe");
+            if ((bool)cbRecurse.IsChecked)
             {
-                Console.WriteLine("Invalid number of arguments. Arguments count should be 7");
-                return false;
+                msg2.add("recursive", "/s");
             }
-            return true;
+            msg2.add("state", "/demo");
+            msg2.add("patterns", txtPatterns.Text);
+            msg2.add("regex", txtRegex.Text);
+            translater.postMessage(msg2);
+
         }
-        */
+
     }
 }

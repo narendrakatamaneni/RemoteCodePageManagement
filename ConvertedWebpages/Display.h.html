@@ -1,0 +1,77 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Display.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="AbstrSynTree.h.html">AbstrSynTree.h</a><br/>
+    </h3>    <pre>
+#pragma once
+<span class="comments">///////////////////////////////////////////////////////////////////////////</span>
+<span class="comments">// Display.h     : defines webpage display using browser functions       //</span>
+<span class="comments">// ver 1.0                                                               //</span>
+<span class="comments">// Author        :Narendra Katamaneni, Syracuse University               //</span>
+<span class="comments">///////////////////////////////////////////////////////////////////////////</span>
+<span class="comments">/*
+*  Package Operations:
+* =======================
+*  This package defines Display class which accepts a list of files as a
+*  vector&lt;string&gt; and uses the default internet browser to display them
+*  one by one. Please note that the functionality has limiations:
+*   1) Opera/MS Edge: will pop-up all tabs instantly. 
+*   2) Chrome/Firefox: will pop-up windows separately only if no
+*      already existing Chrome/Firefox window is opened (all must be
+*      closed before running this). 
+*
+*  Required Files:
+* =======================
+*  AbstrSynTree.h
+*
+*  Maintainence History:
+* =======================
+*  ver 1.0 - 14 Feb 2019
+*  - first release
+*/</span>
+
+
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;unordered_map&gt;
+#include "../AbstractSyntaxTree/AbstrSynTree.h"
+
+enum TypeInfo { class_begin, function_begin, end_scope };
+
+class Display
+<span class="clsClass">{
+public:
+  Display();
+  
+  void display(const std::string& file);
+  void display(const std::vector&lt;std::string&gt;& files);
+  void handlecomments(std::string & line);
+  void handleMultipleComments(std::string & line);
+  void handlefunctions(std::string &line);
+  void handleclass(std::string &line);
+  void handleendscope(std::string & line);
+  std::unordered_map&lt;std::size_t, TypeInfo&gt; collectFullDetails(CodeAnalysis::ASTNode* pGlobalScope, std::unordered_map&lt;std::size_t, TypeInfo&gt;& inUnorderedMap);
+
+};
+</span>
+    </pre>
+  </body>
+</html>

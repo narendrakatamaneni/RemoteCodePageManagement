@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // DependencyTable.h : defines dependency table structure                //
 // ver 1.0                                                               //
-// Author        :Narendra Katamaneni, Syracuse University               //
+// Author        :Jim Fawcett, Syracuse University               //
 ///////////////////////////////////////////////////////////////////////////
 /*
 *  Package Operations:

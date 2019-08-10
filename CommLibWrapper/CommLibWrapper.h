@@ -9,7 +9,7 @@
 *
 *  Required Files:
 * -----------------
-*  CommLibWrapper.h, CommLibWrapper.cpp
+*  IComm.h
 *
 *  Maintenance History:
 * ----------------------

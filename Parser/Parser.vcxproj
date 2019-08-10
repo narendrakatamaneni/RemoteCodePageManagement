@@ -171,6 +171,9 @@
     <ProjectReference Include="..\Logger\Logger.vcxproj">
       <Project>{66d2c764-9da8-4505-b869-8e84e8968f7c}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Tokenizer\Tokenizer.vcxproj">
+      <Project>{5632ab5e-c4aa-4119-9cda-1a49176f2d52}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.vcxproj">
       <Project>{462b43b2-8b13-4178-bf2a-903f76f1985c}</Project>
     </ProjectReference>

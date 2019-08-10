@@ -1,8 +1,31 @@
 /////////////////////////////////////////////////////////////////////
 //  Parser.cpp - Analyzes C++ and C# language constructs           //
 //  ver 1.0                                                        //
-//  Author:        Narendra Katamaneni,  Syracuse University       //
+//  Author:        Jim Fawcett,  Syracuse University				//
 /////////////////////////////////////////////////////////////////////
+
+/*
+  Module Operations:
+  ==================
+  This module defines a Parser class.  Its instances collect
+  semi-expressions from one or more files for analysis.
+  Analysis consists of applying a set of rules to the semi-expression,
+  and for each rule that matches, invoking a set of one or more actions.
+
+  Build Process:
+  ==============
+  Required files
+	- Utilities.h,Toker.h,Semi.h,Parser.h,ActionsAndRules.h,ConfigureParser.h
+
+  Maintenance History:
+  ===================
+  ver 1.0 : 11 Feb 2019
+  - first release
+  - This is a modification of the parser used in CodeAnalyzer.
+  - The most important change is replacing its tokenizer with a
+	State Pattern based design
+
+*/
 
 #include <iostream>
 #include <string>

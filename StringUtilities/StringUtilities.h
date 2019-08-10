@@ -6,9 +6,9 @@
 // ver 1.0                                                           //
 // Language:    C++, Visual Studio 2017                              //
 // Application: Most Projects, CSE687 - Object Oriented Design       //
-// Author:     Narendra Katamaneni, Syracuse University                    //
+// Author:     Jim Fawcett, Syracuse University                    //
 //                                                   //
-// Source:      Narendra Katamaneni, Syracuse University,          //
+// Source:      Jim Fawcett, Syracuse University,          //
 //                                              //
 ///////////////////////////////////////////////////////////////////////
 /*

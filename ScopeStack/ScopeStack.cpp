@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // ScopeStack.cpp - implements template stack holding specified element type //
 // ver 1.0                                                                   //
-// Author:        Narendra Katamaneni, CST 4-187, Syracuse University        //
+// Author:        Jim Fawcett, CST 4-187, Syracuse University        //
 ///////////////////////////////////////////////////////////////////////////////
 
 /*
@@ -24,6 +24,7 @@
   Required Files:
   ===============
   ScopeStack.h
+  Utilities.h
 
   Build Command:
   ==============

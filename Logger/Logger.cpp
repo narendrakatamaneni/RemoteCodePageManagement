@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////
 // Logger.cpp - log text messages to std::ostream                  //
 // ver 1.0                                                         //
-// Author:     Narendra Katamaneni, Syracuse University            //
+// Author:     Jim Fawcett, Syracuse University                   //
 /////////////////////////////////////////////////////////////////////
 
 #include <functional>

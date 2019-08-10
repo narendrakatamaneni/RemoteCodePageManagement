@@ -1,8 +1,51 @@
 /////////////////////////////////////////////////////////////////////////
 // GrammarHelpers.cpp - Functions providing base grammatical analyses  //
 // ver 1.4                                                             //
-// Author:      Narendra Katamaneni, Syracuse University,              //
+// Author:      Jim Fawcett, Syracuse University,                      //
 /////////////////////////////////////////////////////////////////////////
+
+/*
+* Package Operations:
+* -------------------
+* This package provides a single class, GrammarHelper, with all static methods.
+* Each method provides a useful piece of analysis on a Semiression, designed
+* to support source code parsing activities.
+*
+* The purpose of this package is to factor out of the ActionsAndRules package
+* some complex processing so it gets implemented in only one place.  It also
+* factors a lot of grammar processing into small testable chunks.
+*
+* Build Process:
+* --------------
+* Required Files:
+*   GrammarHelpers.h
+*   Semi.h
+*   Logger.h,
+*  Utilities.h
+*
+* Build Command: devenv Analyzer.sln /rebuild debug
+*
+* Maintenance History:
+* --------------------
+* ver 1.4 : 07 Jun 2017
+* - temporarily disabled finding C# lambdas in isFunction
+* ver 1.3 : 26 Feb 2017
+* - modified isFunctionDeclaration to support a bug fix in ActionsAndRules
+*   associated with failure to detect some public data declarations
+* Ver 1.2 : 28 Aug 2016
+* - fixed errors found in last round of testing
+* Ver 1.1 : 25 Aug 2016
+* - added many new functions
+* - changed some of the function signatures
+* Ver 1.0 : 10 Aug 2016
+* - first release
+*
+* Planned Additions and Changes:
+* ------------------------------
+* - These functions may result in scanning a Semi instance several times.
+*   It should be straight forward to reduce some of that.
+*/
+
 
 #include "GrammarHelpers.h"
 #include "../SemiExpression/Semi.h"

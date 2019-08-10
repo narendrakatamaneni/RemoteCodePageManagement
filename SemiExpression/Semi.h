@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////
 // Semi.h - Collects groups of tokens that are useful for          //
 // ver 1.0   grammatical analysis                                  //
-// Narendra Katamaneni, Syracuse University						   //
+// Jim Fawcett, Syracuse University						   //
 /////////////////////////////////////////////////////////////////////
 /*
  * Package Operations:

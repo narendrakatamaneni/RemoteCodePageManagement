@@ -2,8 +2,8 @@
 ////////////////////////////////////////////////////////////////////////
 // Process.h - class used to start process                            //
 // ver 1.0                                                            //
-// Author :Narendra Katamaneni, SU,                         //
-// Source : Narendra Katamaneni, CSE687 - Object Oriented Design, Spring 2018 //
+// Author :Jim Fawcett, SU,												//
+// Source : Jim Fawcett, CSE687 - Object Oriented Design, Spring 2018 //
 ////////////////////////////////////////////////////////////////////////
 /*
 *  Package Operations:

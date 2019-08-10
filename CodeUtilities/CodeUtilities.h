@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////////////
 // CodeUtilities.h - small, generally useful, helper classes         //
 // ver 1.0                                                           //
-// Author:      Narendra Katamaneni, Syracuse University,          //
+// Author:      Jim Fawcett, Syracuse University,                    //
 ///////////////////////////////////////////////////////////////////////
 /*
 * Package Operations:

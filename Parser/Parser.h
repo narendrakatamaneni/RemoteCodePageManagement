@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////
 //  Parser.h - Analyzes C++ and C# language constructs             //
 //  ver 1.0                                                        //
-//  Author:        Narendra Katamaneni,  Syracuse University       //
+//  Author:        Jim fawcett,  Syracuse University				//
 /////////////////////////////////////////////////////////////////////
 /*
   Module Operations: 

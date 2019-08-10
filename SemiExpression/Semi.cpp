@@ -1,9 +1,39 @@
 /////////////////////////////////////////////////////////////////////
 // Semi.cpp - Collects groups of tokens that are useful for        //
 // ver 1.0    grammatical analysis                                 //
-// Narendra Katamaneni,Object Oriented Design, Spring 2019         //
+// Jim Fawcett,Object Oriented Design, Spring 2019         //
 /////////////////////////////////////////////////////////////////////
 
+
+/*
+ * Package Operations:
+ * -------------------
+ * - This package contains a Semi class that implements ITokenCollection
+ *   interface.  It also contains a Factory class that creates instances
+ *   of Semi.
+ * - Semiressions are collections of tokens that are useful for
+ *   detecting specific grammatical constructs.  It is important that
+ *   each instance of Semi contains all tokens necessary to make a
+ *   decision about a grammatical construct, e.g., is this a class?
+ * - It is also important that each Semi instance does not contain
+ *   tokens relevant for more than one detection.
+ * - This code demonstrates how to build a semi-expression collector,
+ *   using the state-based tokenizer.
+ *
+ * Required Files:
+ * ---------------
+ * Semi.h,
+
+ *
+ * Maintenance History
+ * -------------------
+ * ver 1.0 : 29 Feb 2019
+ * - first release
+ *
+ * Note:
+ * - This is a redesign of the Semi package you will find in the Parser folder
+ *   in the Repository.
+ */
 #include "Semi.h"
 #include <sstream>
 

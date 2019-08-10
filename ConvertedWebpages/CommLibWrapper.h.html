@@ -1,0 +1,62 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>CommLibWrapper.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="IComm.h.html">IComm.h</a><br/>
+      <a href="# else .html"># else </a><br/>
+    </h3>    <pre>
+#pragma once
+<span class="comments">/////////////////////////////////////////////////////////////////////</span>
+<span class="comments">// CommLibWrapper.h - Comm object factory                          //</span>
+<span class="comments">// ver 1.0                                                         //</span>
+<span class="comments">// Jim Fawcett, CSE687-OnLine Object Oriented Design, Fall 2017    //</span>
+<span class="comments">/////////////////////////////////////////////////////////////////////</span>
+<span class="comments">/*
+*  Provides export and import declarations for Comm
+*
+*  Required Files:
+* -----------------
+*  CommLibWrapper.h, CommLibWrapper.cpp
+*
+*  Maintenance History:
+* ----------------------
+*  ver 1.0 : 27 Mar 2018
+*  - first release
+*/</span>
+#include &lt;string&gt;
+#include "../CppCommWithFileXfer/MsgPassingComm/IComm.h"
+
+#ifdef IN_DLL
+#define DLL_DECL __declspec(dllexport)
+#else
+#define DLL_DECL __declspec(dllimport)
+#endif
+
+namespace MsgPassingCommunication
+{
+  extern "C" {
+    struct CommFactory {
+      static DLL_DECL IComm* create(const std::string& machineAddress, size_t port);
+    };
+  }
+}
+    </pre>
+  </body>
+</html>

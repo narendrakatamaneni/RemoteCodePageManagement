@@ -17,10 +17,10 @@
 *
 *  Required Files:
 *  ---------------
-*  Comm.h, Comm.cpp,
-*  Sockets.h, Sockets.cpp,
-*  Message.h, Message.cpp,
-*  Utilities.h, Utilities.cpp
+*  IComm.h
+*  Sockets.h
+*  Message.h
+*  Cpp11-BlockingQueue.h
 *
 *  Maintenance History:
 *  --------------------

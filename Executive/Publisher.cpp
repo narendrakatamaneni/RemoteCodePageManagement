@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // CodePublisher.cpp : defines facade/executive for OOD Pr1 S19          //
 // ver 1.0                                                               //
-// Author        :Narendra Katamaneni, Syracuse University               //
+// Author        :Jim Fawcett, Syracuse University               //
 ///////////////////////////////////////////////////////////////////////////
 
 /*
@@ -209,15 +209,6 @@ std::vector<std::string> demoReq678(Publisher& cp) {
 }
 
 
-// -----< demonstrate requirement 9 >-------------------------------------
-void demoReq9() {
-  LoggerDemo::write("\n");
-  LoggerDemo::title("Demonstrating Requirement #9 - Automated Test Unit");
-  LoggerDemo::write("\n  Well, this is the automated test unit.");
-  LoggerDemo::write("\n\n  All Requirements met. ");
-
-}
-
 std::vector<std::string> Publisher::SetCmd(int argc,char** argv) {
 	std::vector<std::string>files;
 
@@ -237,18 +228,7 @@ std::vector<std::string> Publisher::SetCmd(int argc,char** argv) {
 		Publisher cp;
 
 		int err = demoReq5(cp, argc, argv);
-		//if (err == 2) return 2;
-		/*if (err == 1) {
-			LoggerDemo::write("\n  Invalid command line args.\n  Ending demonstration...\n");
-			return 1;
-		}
-		else if (err == 2) {
-			LoggerDemo::write("\n  The given path has no files matching patterns and/or regexes.");
-			LoggerDemo::write("\n  Ending demonstration...\n");
-			return 2;
-		}*/
 		files= demoReq678(cp);
-		demoReq9();
 		stopLoggers();
 	}
 	catch (std::exception& e) {

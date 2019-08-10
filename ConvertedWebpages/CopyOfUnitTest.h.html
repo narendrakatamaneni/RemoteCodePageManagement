@@ -1,0 +1,105 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>CopyOfUnitTest.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <pre>
+#ifndef UNITTEST_H
+#define UNITTEST_H
+<span class="comments">///////////////////////////////////////////////////////////////</span>
+<span class="comments">// UnitTest.cpp - Demonstrate unit testing framework         //</span>
+<span class="comments">// ver 1.1                                                   //</span>
+<span class="comments">// --------------------------------------------------------- //</span>
+<span class="comments">// copyright © Jim Fawcett, 2012, 2013                       //</span>
+<span class="comments">// All rights granted provided that this notice is retained  //</span>
+<span class="comments">// --------------------------------------------------------- //</span>
+<span class="comments">// Jim Fawcett, CSE687-Object Oriented Design, Spring 2013   //</span>
+<span class="comments">///////////////////////////////////////////////////////////////</span>
+
+#include &lt;string&gt;
+#include &lt;iostream&gt;
+
+namespace Test
+{
+  void Title(const std::string& title, char ch='=')
+  <span class="funClass">{
+    std::cout &lt;&lt; "\n  " &lt;&lt; title;
+    std::cout &lt;&lt; "\n " &lt;&lt; std::string(title.size() + 2, ch);
+  }</span>
+
+  template &lt;typename T&gt;
+  class TestBase
+  <span class="clsClass">{
+  public:
+
+    typedef bool (T::*Test) ();
+
+    virtual ~TestBase() {}</span>
+
+    <span class="comments">// Your test driver implements this for each major test</span>
+    <span class="comments">// - call a sequence of doTest(TestN)s</span>
+    <span class="comments">//-----------------------------------------------------</span>
+    virtual bool test()=0;
+
+    <span class="comments">// Executes test functions inside a try block</span>
+    <span class="comments">//-------------------------------------------</span>
+    bool doTest(Test atest) 
+    <span class="funClass">{ 
+      try
+      {
+        return (dynamic_cast&lt;T*&gt;(this)-&gt;*atest)();
+      }
+      catch (std::exception& ex)
+      {
+        std::cout &lt;&lt; "\n  failed: " &lt;&lt; ex.what();
+        return false;
+      }
+      catch(...)
+      {
+        std::cout &lt;&lt; "\n  failed: thrown structured exception";
+        return false;
+      }
+    }</span>
+    <span class="comments">// Call this in your test functions to save duplicating output statements</span>
+    <span class="comments">//-----------------------------------------------------------------------</span>
+    bool checkResult(bool predicate, std::string testname)
+    <span class="funClass">{
+      std::string name = std::string(typeid(*this).name()) + "::" + testname;
+      name = name.substr(6, name.size() - 6);
+      if(predicate)
+        return passed(name);
+      else
+        return failed(name);
+    }</span>
+  protected:
+    bool passed(const std::string& name)
+    <span class="funClass">{
+      std::cout &lt;&lt; "\n  passed: " &lt;&lt; name;
+      return true;
+    }</span>
+    bool failed(const std::string& name)
+    <span class="funClass">{
+      std::cout &lt;&lt; "\n  failed: " &lt;&lt; name;
+      return false;
+    }</span>
+  };
+}</span>
+#endif
+    </pre>
+  </body>
+</html>

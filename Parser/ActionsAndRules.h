@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////
 //  ActionsAndRules.h - declares new parsing rules and actions     //
 //  ver 1.0                                                        //
-//  Author:        Narendra Katamaneni, Syracuse University		   //
+//  Author:        Jim FAwcett, Syracuse University		   //
 /////////////////////////////////////////////////////////////////////
 /*
   Module Operations: 

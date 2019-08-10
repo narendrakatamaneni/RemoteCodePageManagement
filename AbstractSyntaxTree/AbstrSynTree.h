@@ -2,7 +2,7 @@
 /////////////////////////////////////////////////////////////////////
 //  AbstrSynTree.h - Represents an Abstract Syntax Tree            //
 //  ver 1.0                                                        //
-//  Author:        Narendra Katamaneni, Syracuse University        //
+//  Author:        Jim Fawcett, Syracuse University					//
 /////////////////////////////////////////////////////////////////////
 /*
   Package Operations:

@@ -1,0 +1,199 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Display.cpp</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="Display.h.html">Display.h</a><br/>
+      <a href="Process.h.html">Process.h</a><br/>
+      <a href="Logger.h.html">Logger.h</a><br/>
+      <a href="FileSystem.h.html">FileSystem.h</a><br/>
+    </h3>    <pre>
+<span class="comments">///////////////////////////////////////////////////////////////////////////</span>
+<span class="comments">// Display.cpp   : defines webpage display using browser functions       //</span>
+<span class="comments">// ver 1.0                                                               //</span>
+<span class="comments">// Author        :Narendra Katamaneni, Syracuse University               //</span>
+<span class="comments">///////////////////////////////////////////////////////////////////////////</span>
+
+<span class="comments">/*
+* Package Operations:
+* -------------------
+* This package supports logging for multiple concurrent clients to a
+* single std::ostream.  It does this be enqueuing messages in a
+* blocking queue and dequeuing with a single thread that writes to
+* the std::ostream.
+*
+* Build Process:
+* --------------
+* Required Files: Process.h,Logger.h,FileSystem.h,Display.h
+*
+* Build Command: devenv logger.sln /rebuild debug
+*
+* Maintenance History:
+* --------------------
+* ver 1.0 : 11 Feb 2019
+* - added multiple stream capability
+*
+* Planned Additions and Changes:
+* ------------------------------
+* - none yet
+*/</span>
+
+#include "Display.h"
+#include "../Process/Process.h"
+#include "../Logger/Logger.h"
+#include "../FileSystem/FileSystem.h"
+
+using namespace Logging;
+
+<span class="comments">// -----&lt; default ctor &gt;--------------------------------------------------</span>
+Display::Display() { }</span>
+
+<span class="comments">// -----&lt; display single file &gt;-------------------------------------------</span>
+void Display::display(const std::string & file)
+<span class="funClass">{
+  LoggerDebug::write("\n  Displaying file: " + FileSystem::Path::getName(file) + " in browser");
+  LoggerDemo::write("\n  Displaying file: " + FileSystem::Path::getName(file) + " in browser");
+
+  
+  Process p;
+  p.application("C:/Windows/System32/cmd.exe");
+  
+  std::string WebBrowserPath = "chrome.exe";
+  std::string cmd = "/c start /wait \"\" \""+WebBrowserPath+"\" /new-window " + FileSystem::Path::getFullFileSpec(file);
+
+  p.commandLine(cmd);
+  p.create();
+  CBP callback = []() {
+	  LoggerDebug::write("\n  --- child browser exited with this message ---");
+	  LoggerDemo::write("\n  --- child browser exited with this message ---");
+  };
+  p.setCallBackProcessing(callback);
+  p.registerCallback();
+  WaitForSingleObject(p.getProcessHandle(), INFINITE);
+}</span>
+
+<span class="comments">// -----&lt; display multiple files  &gt;---------------------------------------</span>
+void Display::display(const std::vector&lt;std::string&gt;& files)
+<span class="funClass">{
+  for (auto file : files) 
+    display(file);
+}</span>
+
+<span class="comments">// -----&lt; private - hanles html comments &gt;---------------------------</span>
+void Display::handlecomments(std::string & line)
+<span class="funClass">{
+	size_t pos = line.find('/');
+	if (pos == line.npos) return;
+	if (pos == line.size() - 1) return;
+	if (line[pos + 1] == '/') {
+		line.replace(pos, 1, "&lt;span class=\"comments\"&gt;/");
+		line += "&lt;/span&gt;";
+	}
+	if (line[pos + 1] == '*') {
+		line.replace(pos, 1, "&lt;span class=\"comments\"&gt;/");
+	}
+
+}</span>
+
+<span class="comments">// &lt;------- handles multiple comments in a file ---------------&gt;</span>
+void Display::handleMultipleComments(std::string & line)
+<span class="funClass">{
+	size_t position = line.find('*');
+	if (position == line.npos) return;
+	if (position == line.size() - 1) return;
+	if (line[position + 1] == '/') {
+		line += "&lt;/span&gt;";
+	}
+
+}</span>
+
+<span class="comments">// -----&lt; private - collects type,name,startlinecount and endlinecount for each children of parser &gt;--------------------------</span>
+std::unordered_map&lt;std::size_t, TypeInfo&gt; Display::collectFullDetails(CodeAnalysis::ASTNode* pGlobalScope, std::unordered_map&lt;std::size_t, TypeInfo&gt;& inUnOrderedMap) <span class="funClass">{
+
+	std::ostringstream out;
+
+	if (pGlobalScope-&gt;type_ == "class") {
+		inUnOrderedMap[pGlobalScope-&gt;startLineCount_] = TypeInfo::class_begin;
+		inUnOrderedMap[pGlobalScope-&gt;endLineCount_] = TypeInfo::end_scope;
+	}
+
+	else if (pGlobalScope-&gt;type_ == "function") {
+		inUnOrderedMap[pGlobalScope-&gt;startLineCount_] = TypeInfo::function_begin;
+		inUnOrderedMap[pGlobalScope-&gt;endLineCount_] = TypeInfo::end_scope;
+	}
+
+	auto iter = pGlobalScope-&gt;children_.begin();
+
+	while (iter != pGlobalScope-&gt;children_.end())
+
+	{
+		collectFullDetails(*iter, inUnOrderedMap);
+
+		++iter;
+	}
+
+	return inUnOrderedMap;
+}</span>
+
+<span class="comments">// &lt;------- handles function starting scope in a file ---------------&gt;</span>
+void Display::handlefunctions(std::string &line) <span class="funClass">{
+	size_t pos = line.find('{');
+	if (pos == line.npos) return;
+
+	line.replace(pos, 1, "&lt;span class=\"funClass\"&gt;{");
+
+}</span>
+
+<span class="comments">// &lt;------- handles class  starting scope in a file ---------------&gt;</span>
+void Display::handleclass(std::string &line) <span class="funClass">{
+	size_t pos = line.find('{');
+	if (pos == line.npos) return;
+
+	line.replace(pos, 1, "&lt;span class=\"clsClass\"&gt;{");
+
+}</span>
+
+<span class="comments">// &lt;------- handles end scope for classes and functions in a file ---------------&gt;</span>
+void Display::handleendscope(std::string & line)
+<span class="funClass">{
+	line += "&lt;/span&gt;";
+}</span>
+
+#ifdef TEST_DISPLAY
+
+#include &lt;iostream&gt;
+
+int main() <span class="funClass">{
+  LoggerDebug::attach(&std::cout);
+  LoggerDebug::start();
+
+  std::vector&lt;std::string&gt; files;
+  files.push_back("..\\ConvertedWebpages\\Converter.h.html");
+  files.push_back("..\\ConvertedWebpages\\Converter.cpp.html");
+
+  Display d();
+  d.display(files);
+
+  LoggerDebug::stop();
+}</span>
+
+#endif
+    </pre>
+  </body>
+</html>

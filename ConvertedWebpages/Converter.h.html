@@ -1,0 +1,102 @@
+<DOCTYPE !HTML>
+<html>
+  <head>
+    <Title>Converter.h</Title>
+    <style>
+      body {
+        padding:15px 40px;
+        font-family: Consolas;
+        font-size: 1.25em;
+        font-weight: normal;
+      }
+      </style>
+  <link rel = "stylesheet" type = "text/css" href = "style.css" >
+  <script src="script.js"> </script> 
+  </head>
+
+  <body>
+ <input type ="submit" value= "Comments" id ="cmt" onclick="togglevisibility('comments')" ></input>
+ <input type ="submit" value= "Class"  id ="cls" onclick="togglevisibility('clsClass')" ></input>
+ <input type ="submit" value= "Function" id ="fun" onclick="togglevisibility('funClass')" ></input>
+    <h3>Dependencies: 
+      <a href="DependencyTable.h.html">DependencyTable.h</a><br/>
+      <a href="AbstrSynTree.h.html">AbstrSynTree.h</a><br/>
+    </h3>    <pre>
+#pragma once
+<span class="comments">///////////////////////////////////////////////////////////////////////////</span>
+<span class="comments">// Converter.h   : defines source code conversion to webpage functions   //</span>
+<span class="comments">// ver 1.0                                                               //</span>
+<span class="comments">// Author        :Narendra Katamaneni, Syracuse University               //</span>
+<span class="comments">///////////////////////////////////////////////////////////////////////////</span>
+<span class="comments">/*
+*  Package Operations:
+* =======================
+*  This package defines CodeConverter class which accepts DependencyTable
+*  and uses its relationships to create linked webpages that point to each
+*  other based on dependencies. It can also convert single files if needed.
+*  The conversion process filters HTML special characters before printing
+*  them into output files. The resulting output of this converter is a list
+*  of files (vector&lt;string&gt;) of the created webpages. 
+*
+*  Required Files:
+* =======================
+*   DependencyTable.h , AbstrSynTree.h
+*
+*  Maintainence History:
+* =======================
+*  ver 1.0 - 11 Feb 2019
+*  - first release
+*/</span>
+
+#include "../Dependencies/DependencyTable.h"
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;fstream&gt;
+#include "../AbstractSyntaxTree/AbstrSynTree.h"
+
+
+
+class CodeConverter
+<span class="clsClass">{
+public:
+  CodeConverter();
+  CodeConverter(const DependencyTable& dt);
+
+  const std::string& outputDir() const;
+  void outputDir(const std::string& dir);
+  bool createOutpurDir();
+
+  void setDepTable(const DependencyTable& dt);
+
+  std::vector&lt;std::string&gt; convert();
+  std::string convert(const std::string& filepath);
+  std::vector&lt;std::string&gt; convert(const std::vector&lt;std::string&gt;& files);
+  std::vector&lt;std::string&gt; convertFile(std::vector&lt;std::string&gt; files);
+  
+  const std::vector&lt;std::string&gt; convertedFiles() const;
+
+  void clear();
+
+private:
+  bool convertFile(std::string file);
+  void addPreCodeHTML(const std::string& title);
+  void addPreTag();
+  void addDependencyLinks(std::string file);
+  void addClosingTags();
+  void skipSpecialChars(std::string& line);
+  void writeLine(CodeAnalysis::ASTNode* pGlobalScope, std::ifstream& in);
+  void collectDependencies(CodeAnalysis::ASTNode* pGlobalScope, std::string file);
+  bool processDependencyFiles(std::string file);
+  void htmlOpeartions(const std::string& filename, std::string file, CodeAnalysis::ASTNode* pGlobalScope, std::ifstream & in);
+
+private:
+  DependencyTable dt_;
+  std::string outputDir_ = "../ConvertedWebpages/";
+  std::vector&lt;std::string&gt; convertedFiles_;
+  std::ofstream out_;
+  static std::vector&lt;std::string&gt;& static_vector;
+};
+</span>
+    </pre>
+  </body>
+</html>

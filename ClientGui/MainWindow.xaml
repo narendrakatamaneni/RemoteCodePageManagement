@@ -2,7 +2,7 @@
     /////////////////////////////////////////////////////////////////////
     // MainWindow.xaml.cs - Code Publisher Client                      //
     //                                                                 //
-    //Narendra Katamaneni, CSE687 - Object Oriented Design, Spring 2019//
+    //Jim Fawcett, CSE687 - Object Oriented Design, Spring 2019//
     /////////////////////////////////////////////////////////////////////
   -->
 
@@ -63,7 +63,7 @@
                     <Separator Grid.Row="4" Grid.ColumnSpan="5"/>
                     <!--row 5 -->
                     <Label Grid.Row="5" Grid.Column="0" Content="Patterns:" />
-                    <TextBox Name="txtPatterns"  Grid.Row="5" Grid.Column="1" Margin="5" KeyUp="TxtPatterns_KeyUp"/>
+                    <TextBox Name="txtPatterns"  Grid.Row="5" Grid.Column="1" Margin="5"/>
                     <Label Grid.Row="5"  Grid.Column="2"  Content="Regex:"/>
                     <TextBox Name="txtRegex" Grid.Row="5" Grid.Column="3" Margin="5" Grid.ColumnSpan="2"/>
 

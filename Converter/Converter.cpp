@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // Converter.cpp : implements and provides test stub for Converter.h     //
 // ver 1.0                                                               //
-// Author        :Narendra Katamaneni, Syracuse University               //
+// Author        :Jim Fawcett, Syracuse University               //
 ///////////////////////////////////////////////////////////////////////////
 
 /*

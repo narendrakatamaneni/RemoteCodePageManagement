@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////
 //  ConfigureParser.h - builds and configures parsers              //
 //  ver 1.0                                                        //
-//  Author:        Narendra Katamaneni,Syracuse University		   //
+//  Author:        Jim FAwcett,Syracuse University					//
 /////////////////////////////////////////////////////////////////////
 /*
   Module Operations: 

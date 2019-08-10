@@ -2,7 +2,7 @@
 /////////////////////////////////////////////////////////////////////
 // Properties.h - provides getter and setter methods               //
 // ver 1.1                                                         //
-// Narendra Katamaneni, CSE687 - Object Oriented Design, Fall 2018         //
+// Jim Fawcett, CSE687 - Object Oriented Design, Fall 2018         //
 /////////////////////////////////////////////////////////////////////
 /*
 *  Package Operations:

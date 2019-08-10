@@ -2,8 +2,8 @@
 /////////////////////////////////////////////////////////////////////
 // DirExplorerN.h - Naive directory explorer                       //
 // ver 1.3                                                         //
-// Author  :Narendra Katamaneni,                         //
-// Source  : Narendra Katamaneni, CSE687 - OOD, Fall 2018                  //
+// Author  :Jim Fawcett,								           //
+// Source  : Jim Fawcett, CSE687 - OOD, Fall 2018                  //
 /////////////////////////////////////////////////////////////////////
 /*
  * Package Operations:
@@ -47,10 +47,7 @@
  *
  * Required Files:
  * ---------------
- * DirExplorerN.h, DirExplorerN.cpp
- * FileSystem.h, FileSystem.cpp      // Directory and Path classes
- * StringUtilities.h                 // Title function
- * CodeUtilities.h                   // ProcessCmdLine class
+ * FileSystem.h     // Directory and Path classes
  *
  * Maintenance History:
  * --------------------

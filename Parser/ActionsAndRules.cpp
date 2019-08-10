@@ -1,9 +1,31 @@
 /////////////////////////////////////////////////////////////////////
 //  ActionsAndRules.cpp - implements new parsing rules and actions //
 //  ver 3.4                                                        //
-//  Author:        Narendra Katamaneni, CST 4-187, Syracuse University 
+//  Author:        Jim Fawcett, CST 4-187, Syracuse University 
 /////////////////////////////////////////////////////////////////////
 
+/*
+  Module Operations:
+  ==================
+  This module defines several action classes.  Its classes provide
+  specialized services needed for specific applications.  The modules
+  Parser, Semiression, and Tokenizer, are intended to be reusable
+  without change.  This module provides a place to put extensions of
+  these facilities and is not expected to be reusable.
+
+  Required files
+  ==============
+	- ActionsAndRules.h
+	 Utilities.h
+
+  Maintenance History:
+  ====================
+  ver 1.0 : 11 Feb 2019
+  - small changes spread over many of the Rule and Action classes, caused
+	by changing the lexical scanner, which forced some changes to the
+	scanner's interface (sigh!)
+
+*/
 #include "ActionsAndRules.h"
 #include "../Utilities/Utilities.h"
 

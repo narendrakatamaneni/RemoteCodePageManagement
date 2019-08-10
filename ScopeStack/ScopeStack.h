@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // ScopeStack.h - implements template stack holding specified element type //
 // ver 1.0                                                                 //
-// Author:        Narendra Katamaneni, Syracuse University				   //
+// Author:        Jim Fawcett, Syracuse University				   //
 /////////////////////////////////////////////////////////////////////////////
 /*
   Package Operations:
@@ -24,7 +24,7 @@
 
   Required Files:
   ===============
-
+  Logger.h,Utilities.h
 
   Build Command:
   ==============

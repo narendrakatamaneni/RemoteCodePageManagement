@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // Display.cpp   : defines webpage display using browser functions       //
 // ver 1.0                                                               //
-// Author        :Narendra Katamaneni, Syracuse University               //
+// Author        :Jim Fawcett, Syracuse University               //
 ///////////////////////////////////////////////////////////////////////////
 
 /*

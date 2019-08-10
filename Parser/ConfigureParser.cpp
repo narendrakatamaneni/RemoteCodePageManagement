@@ -5,9 +5,40 @@
 //  Lanaguage:     Visual C++ 2005                                 //
 //  Platform:      Dell Dimension 9150, Windows XP SP2             //
 //  Application:   Prototype for CSE687 Pr1, Sp06                  //
-//  Author:        Narendra Katamaneni, CST 2-187, Syracuse University     //
+//  Author:        Jim Fawcett, CST 2-187, Syracuse University     //
 //                 (315) 443-3948,            //
 /////////////////////////////////////////////////////////////////////
+
+/*
+  Module Operations:
+  ==================
+  This module builds and configures parsers.  It builds the parser
+  parts and configures them with application specific rules and actions.
+
+  Public Interface:
+  =================
+  ConfigParseForCodeAnal config;
+  config.Build();
+  config.Attach(someFileName);
+
+  Build Process:
+  ==============
+  Required files
+	-  Parser.h,
+	  ActionsAndRules.h,
+	  Semi.h, Toker.h,ConfigureParser.h
+  Build commands (either one)
+	- devenv Project1HelpS06.sln
+	- cl /EHsc /DTEST_PARSER ConfigureParser.cpp parser.cpp \
+		 ActionsAndRules.cpp \
+		 Semiression.cpp tokenizer.cpp /link setargv.obj
+
+  Maintenance History:
+  ====================
+  ver 1.0 : 28 Feb 2019
+  - first release
+*/
+
 
 #include <fstream>
 #include "Parser.h"

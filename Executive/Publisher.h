@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // CodePublisher.h : defines facade/executive for OOD Pr1 S19            //
 // ver 1.0                                                               //
-// Author        :Narendra Katamaneni,CSE687 Syracuse University         //
+// Author        :Jim Fawcett,CSE687 Syracuse University         //
 ///////////////////////////////////////////////////////////////////////////
 /*
 *  Package Operations:
@@ -18,7 +18,6 @@
 *  Converter.h 
 *  Display.h 
 *  Loader.h
-*  IPublisher.h
 *
 *  Maintainence History:
 * =======================
@@ -35,7 +34,6 @@
 #include "../Display/Display.h"
 #include "../Loader/Loader.h"
 #include "../CodeUtilities/CodeUtilities.h"
-#include "IPublisher.h"
 
 class Publisher 
 {
